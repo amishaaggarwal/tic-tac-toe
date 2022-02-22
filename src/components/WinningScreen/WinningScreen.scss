@@ -1,0 +1,22 @@
+.zoom-in {
+  animation: mymove 5s  ;
+   -webkit-animation-fill-mode: forwards;
+}
+
+@keyframes mymove {
+  0%{
+    opacity: 0;
+  }
+  50% {
+    opacity: .5;
+    font-size: 90px;
+    display: flex;
+    justify-content: center;
+  }
+  100% {
+    opacity: 1;
+    font-size: 90px;
+    display: flex;
+    justify-content: center;
+  }
+}

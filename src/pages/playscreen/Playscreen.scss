@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+.playscreen {
+  background-color: #121212;
+  background: url("../../assets/bg-brick.jpg") ;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.heading {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  padding-top: 30px;
+  // font-family: "Dancing Script", cursive;
+  
+  font-size: 50px;
+  color: aqua;
+  margin-bottom: 3vh;
+}
