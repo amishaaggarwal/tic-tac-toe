@@ -1,20 +1,25 @@
-import React from "react";
+import React, { createContext} from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
 import App from "./App";
 import "react-toastify/dist/ReactToastify.css";
 import reportWebVitals from "./reportWebVitals";
-import { Provider } from "react-redux";
-import store from "redux/store/store";
 import { BrowserRouter } from "react-router-dom";
+
+const player = {
+  player1: "Player1",
+  player2: "Computer",
+};
+export const PlayerContext = createContext();
+
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Provider store={store}>
+      <PlayerContext.Provider value={player}>
         <App />
-      </Provider>
+      </PlayerContext.Provider>
       <ToastContainer limit={1} id="toast-container" />
     </BrowserRouter>
   </React.StrictMode>,

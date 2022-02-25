@@ -1,71 +1,123 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { gameListRef } from "utils/firebaseSetup/FirebaseSetup";
+import { onValue, update } from "firebase/database";
+import { useNavigate, useParams } from "react-router-dom";
+import { signInWithPopup } from "firebase/auth";
+import { provider, auth, db } from "utils/firebaseSetup/FirebaseSetup";
+import { ref } from "firebase/database";
 import "./StartScreen.scss";
-import { setPlayers } from "redux/loginredux/LoginActions";
+import { toast } from "react-toastify";
+import { Modal, Stack } from "@mui/material";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { setSessionStorage } from "utils/Storage/SessionStorage";
 
-const data = {
+let data = {
   players: {
     player1: {
       name: "",
-      ip: "",
+      email: "",
     },
     player2: {
-      name: "Computer",
-      ip: "",
+      name: "",
+      email: "",
     },
   },
   gamestate: ["", "", "", "", "", "", "", "", ""],
-  current: "",
-  scores: [0, 0],
+  lastMove: {
+    position: -1,
+    id: "",
+  },
+  current: "X",
+  winner: "",
 };
+
 function StartScreen() {
   const navigate = useNavigate();
-  const [player, setPlayer] = useState({
-    player1: "player1",
-    player2: "Computer",
-  });
-  const dispatch = useDispatch();
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    data.players.player1.name = player.player1;
-    data.players.player2.name = player.player2;
-    dispatch(setPlayers(data));
-    navigate("/mode");
+  const { newKey } = useParams();
+  const [initData, setInitData] = useState(data);
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  // get(child(ref(db), `Game/${newKey}/`))
+  //   .then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       data = snapshot.val();
+  //     } else {
+  //       console.log("No data available");
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
+  useEffect(() => {
+    onValue(ref(db, `Game/${newKey}`), (snapshot) => {
+      const fbdata = snapshot.val();
+      data.players = fbdata.players;
+      console.log(fbdata);
+      setInitData(data);
+    });
+  }, [newKey]);
+
+  const signIn = (e) => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // The signed-in user info.
+        const user = result.user;
+        if (data.players.player1.name === "") {
+          setSessionStorage(user.email);
+          data.players.player1.name = user.displayName.split(" ")[0];
+          data.players.player1.email = user.email;
+          setInitData(data);
+          openModal();
+        } else if(data.players.player1.email !== user.email) {
+          setSessionStorage(user.email);
+          data.players.player2.name = user.displayName.split(" ")[0];
+          data.players.player2.email = user.email;
+          setInitData(data);
+          navigate(`/tic-tac-toe/${newKey}`, { state: data });
+        }
+        const updates = {};
+        updates[newKey] = data;
+        update(gameListRef, updates);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        // The email of the user's account used.
+        const errorMessage = error.message;
+        toast.error(`${errorCode}:${errorMessage}`);
+      });
   };
-  const handlechange = (e) => {
-    setPlayer({ ...player, [e.target.name]: e.target.value });
+  const openModal = () => {
+    setIsOpen(true);
   };
+  const closeModal = () => {
+    setIsOpen(false);
+    navigate(`/tic-tac-toe/${newKey}`, { state: {...initData} });
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="startscreen">
-      <TextField
-        required
-        label="Player 1"
-        name="player1"
-        defaultValue=""
-        placeholder="player 1"
-        sx={{ marginBottom: "20px" }}
-        onChange={handlechange}
-      />
-      {/* <TextField
-        required
-        label="Player 2"
-        name="player2"
-        defaultValue=""
-        placeholder="player 2"
-        sx={{ marginBottom: "20px" }}
-        onChange={handlechange}
-      /> */}
+    <div>
       <Button
         variant="contained"
         sx={{ backgroundColor: "aqua", color: "black" }}
         type="submit"
+        onClick={signIn}
       >
-        Lets Play!
+        Sign-In with Google!
       </Button>
-    </form>
+      <Modal open={modalIsOpen} onClose={closeModal} className="winning-modal">
+        <Stack spacing={3}>
+          <div>Share link below with your friend!</div>
+          <Stack direction="row" spacing={2} className="button-row">
+            <CopyToClipboard text={window.location.href}>
+              <button>Copy Link!</button>
+            </CopyToClipboard>
+            <Button onClick={closeModal}>Lets Play!</Button>
+          </Stack>
+        </Stack>
+      </Modal>
+    </div>
   );
 }
 

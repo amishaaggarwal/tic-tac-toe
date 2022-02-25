@@ -1,23 +1,36 @@
-import { Button, Stack } from '@mui/material'
-import React from 'react'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
-import { setMode } from 'redux/gameredux/GameActions';
+import { Button, Stack } from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { gameListRef } from "utils/firebaseSetup/FirebaseSetup";
+import { push,child, } from "firebase/database";
 
 function ModeSelect() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const changeMode = (mymode) => {
-        dispatch(setMode(mymode));
-        navigate("/tic-tac-toe");
+  const navigate = useNavigate();
+  const changeMode = (mymode) => {
+    switch (mymode) {
+      case "single":
+        navigate("/tic-tac-toe-single-player");
+        break;
+      case "multi":
+        const newKey = push(child(gameListRef, "Game")).key;
+        let key = newKey.substring(1)
+        navigate(`/${key}`);
+        break;
+      default:
+        navigate("/");
     }
-    return (
-        <Stack sx={{ backgroundColor: "#C0C0C0", padding: "60px" }} spacing={2}>
-            <h1>Select Mode</h1>
-            <Button onClick={() => changeMode("single")} variant="contained">Single Player</Button>
-            <Button onClick={() => changeMode("multi")} variant="contained"> Multi Player</Button>
-        </Stack>
-    )
+  };
+  return (
+    <Stack sx={{ backgroundColor: "#C0C0C0", padding: "60px" }} spacing={2}>
+      <h1>Select Mode</h1>
+      <Button onClick={() => changeMode("single")} variant="contained">
+        Single Player
+      </Button>
+      <Button onClick={() => changeMode("multi")} variant="contained">
+        Multi Player
+      </Button>
+    </Stack>
+  );
 }
 
-export default ModeSelect
+export default ModeSelect;

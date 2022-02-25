@@ -1,4 +1,5 @@
-import TicTacGrid from "components/TicTacGrid/TicTacGrid";
+import Multiplayer from "components/Multiplayer/Multiplayer";
+import TicTacGridSinglePlayer from "components/TicTacGridSinglePlayer/TicTacGridSinglePlayer";
 import ModeSelect from "pages/ModeSelect/ModeSelect";
 import PlayScreen from "pages/playscreen/PlayScreen";
 import StartScreen from "pages/StartScreen/StartScreen";
@@ -9,9 +10,13 @@ function Routing() {
   return (
     <Routes>
       <Route path="/" element={<PlayScreen />}>
-        <Route path="/" element={<StartScreen />} />
-        <Route path="mode" element={<ModeSelect/>}/>
-        <Route path="tic-tac-toe" element={<TicTacGrid/>}/>
+        <Route path="/" element={<ModeSelect />} />
+        <Route
+          path="tic-tac-toe-single-player"
+          element={<TicTacGridSinglePlayer />}
+        />
+        <Route path="tic-tac-toe/:newKey" element={<Multiplayer />} />
+        <Route path=":newKey" element={<StartScreen/>}/>
       </Route>
     </Routes>
   );
