@@ -38,22 +38,10 @@ function StartScreen() {
   const [initData, setInitData] = useState(data);
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  // get(child(ref(db), `Game/${newKey}/`))
-  //   .then((snapshot) => {
-  //     if (snapshot.exists()) {
-  //       data = snapshot.val();
-  //     } else {
-  //       console.log("No data available");
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
   useEffect(() => {
     onValue(ref(db, `Game/${newKey}`), (snapshot) => {
       const fbdata = snapshot.val();
       data.players = fbdata.players;
-      console.log(fbdata);
       setInitData(data);
     });
   }, [newKey]);
