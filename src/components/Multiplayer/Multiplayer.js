@@ -112,12 +112,11 @@ function Multiplayer() {
           break;
         }
       }
-      // x = currentState.filter(checkEmpty).length;
-      // setCount(x);
     },
     [updateFireBase]
   );
 
+  //-opens appropriate modal if we have winner,loser or draw
   const showWinner = useCallback(() => {
     if (wins !== "") {
       if (
@@ -131,13 +130,7 @@ function Multiplayer() {
     } else if (count === 0) {
       openDrawModal();
     }
-  }, [
-    count,
-    myUser,
-    users.player1.email,
-    wins,
-    users.player2.email,
-  ]);
+  }, [count, myUser, users.player1.email, wins, users.player2.email]);
 
   //-checks if the grid cell is empty
   const checkEmpty = (x) => {
@@ -150,14 +143,11 @@ function Multiplayer() {
       let mygrid = [...currentState];
       mygrid[index] = moveNow;
       setMyMove(1);
-      // setCurrentState(mygrid);
       let lastMove = {
         id: moveNow === CROSS ? users.player1.email : users.player2.email,
         position: index,
       };
       let turn = moveNow === CROSS ? ZERO : CROSS;
-      // setMoveNow(turn);
-      // setCount(x);
       checkWinner(mygrid);
       updateFireBase("gamestate", mygrid);
       updateFireBase("current", turn);
@@ -203,34 +193,13 @@ function Multiplayer() {
     showWinner();
   }, [currentState, showWinner]);
 
-  //   const AutoPlay = useCallback(() => {
-  //     if (won === "" && emptyBlocks.length > 0 && myMove === 0) {
-  //       playMove(computerPlay(emptyBlocks));
-  //     }
-  //   }, [emptyBlocks, myMove, playMove]);
-
-  //   useEffect(() => {
-  //     const timeout = setTimeout(() => {
-  //       AutoPlay();
-  //     }, 30000);
-  //     return () => {
-  //       clearTimeout(timeout);
-  //     };
-  //   }, [AutoPlay, wins]);
-
   //-resets all gamestates in firebase
   const resetGame = () => {
-    // setCurrentState(initialState);
-    // x = initialState.length;
-    // setCount(9);
-    // setMoveNow(CROSS);
-    // setWins("");
     updateFireBase("winner", "");
     updateFireBase("current", CROSS);
     updateFireBase("gamestate", initialState);
     updateFireBase("lastMove", { id: "", position: -1 });
     setMyMove(0);
-    // setEmptyBlocks([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   };
 
   //-opens winner modal
