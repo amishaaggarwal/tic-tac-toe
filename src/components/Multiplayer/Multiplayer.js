@@ -364,8 +364,7 @@ function Multiplayer() {
         className="winning-modal"
         overlayClassName="modal-overlay"
       >
-        {/* {console.log(play.state.winner, wins)} */}
-        <DrawScreen msg={wins === "" && count === 9 ? DRAW : LOST} />
+        <DrawScreen msg={wins === "" && count === 0 ? DRAW : LOST} />
         <Stack direction="row" spacing={2} className="button-row">
           <Button
             onClick={closeDrawModal}
