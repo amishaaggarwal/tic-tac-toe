@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { Modal, Stack } from "@mui/material";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { setSessionStorage } from "utils/Storage/SessionStorage";
+import { updateFireBase } from "utils/firebaseSetup/firebaseFunctions";
 
 let data = {
   players: {
@@ -51,13 +52,20 @@ function StartScreen() {
       .then((result) => {
         // The signed-in user info.
         const user = result.user;
+
+        //-user data set to firebase
+        updateFireBase("UserList", user.email, "name", user.displayName);
+        updateFireBase("UserList", user.email, "email", user.email);
+        updateFireBase("UserList", user.email, "dp", user.photoURL);
+
+
         if (data.players.player1.name === "") {
           setSessionStorage(user.email);
           data.players.player1.name = user.displayName.split(" ")[0];
           data.players.player1.email = user.email;
           setInitData(data);
           openModal();
-        } else if(data.players.player1.email !== user.email) {
+        } else if (data.players.player1.email !== user.email) {
           setSessionStorage(user.email);
           data.players.player2.name = user.displayName.split(" ")[0];
           data.players.player2.email = user.email;
@@ -81,7 +89,7 @@ function StartScreen() {
   };
   const closeModal = () => {
     setIsOpen(false);
-    navigate(`/tic-tac-toe/${newKey}`, { state: {...initData} });
+    navigate(`/tic-tac-toe/${newKey}`, { state: { ...initData } });
   };
 
   return (

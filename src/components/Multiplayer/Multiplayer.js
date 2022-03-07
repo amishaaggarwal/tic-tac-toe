@@ -17,7 +17,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { getSessionStorage } from "utils/Storage/SessionStorage";
 import { db } from "utils/firebaseSetup/FirebaseSetup";
 import { onValue, ref, update } from "firebase/database";
-
+import { updateFireBase } from "utils/firebaseSetup/firebaseFunctions";
 //-empty grid
 const initialState = ["", "", "", "", "", "", "", "", ""];
 
@@ -66,35 +66,6 @@ function Multiplayer() {
     });
   }, [newKey]);
 
-  //-function for updating firebase data
-  const updateFireBase = useCallback(
-    (keys, value) => {
-      switch (keys) {
-        case "gamestate":
-          update(ref(db, `Game/${newKey}`), { gamestate: value });
-          break;
-        case "current":
-          update(ref(db, `Game/${newKey}`), { current: value });
-          break;
-        case "players":
-          update(ref(db, `Game/${newKey}`), { players: value });
-          break;
-        case "moveNow":
-          update(ref(db, `Game/${newKey}`), { moveNow: value });
-          break;
-        case "lastMove":
-          update(ref(db, `Game/${newKey}`), { lastMove: value });
-          break;
-        case "winner":
-          update(ref(db, `Game/${newKey}`), { winner: value });
-          break;
-        default:
-          break;
-      }
-    },
-    [newKey]
-  );
-
   //-for cases when time runs out,selects an empty cell from grid
   const computerPlay = (empty) => {
     let i = Math.ceil(Math.random() * (empty.length - 1));
@@ -108,29 +79,44 @@ function Multiplayer() {
         const [a, b, c] = winingState[i];
         if (mygrid[a] && mygrid[a] === mygrid[b] && mygrid[a] === mygrid[c]) {
           won = mygrid[a];
-          updateFireBase("winner", won);
+          updateFireBase("Game", newKey, "winner", won);
           break;
         }
       }
     },
-    [updateFireBase]
+    [newKey]
   );
 
   //-opens appropriate modal if we have winner,loser or draw
   const showWinner = useCallback(() => {
     if (wins !== "") {
+      // updateFireBase("UserList", users.player1.email, "total", 1);
+      // updateFireBase("UserList", users.player2.email, "total", 1);
       if (
         myUser !== (wins === CROSS ? users.player1.email : users.player2.email)
       ) {
         openDrawModal();
+        updateFireBase("UserList", myUser, "gameID", {
+          status: "lost",
+          gameid: newKey,
+        });
       } else {
         setConfetti(true);
         openModal();
+        updateFireBase("UserList", myUser, "score-credit", 50);
+        updateFireBase("UserList", myUser, "gameID", {
+          status: "won",
+          gameid: newKey,
+        });
       }
     } else if (count === 0) {
       openDrawModal();
+      updateFireBase("UserList", myUser, "gameID", {
+        status: "draw",
+        gameid: newKey,
+      });
     }
-  }, [count, myUser, users.player1.email, wins, users.player2.email]);
+  }, [count, myUser, users.player1.email, wins, users.player2.email, newKey]);
 
   //-checks if the grid cell is empty
   const checkEmpty = (x) => {
@@ -149,14 +135,14 @@ function Multiplayer() {
       };
       let turn = moveNow === CROSS ? ZERO : CROSS;
       checkWinner(mygrid);
-      updateFireBase("gamestate", mygrid);
-      updateFireBase("current", turn);
-      updateFireBase("lastMove", lastMove);
+      updateFireBase("Game", newKey, "gamestate", mygrid);
+      updateFireBase("Game", newKey, "current", turn);
+      updateFireBase("Game", newKey, "lastMove", lastMove);
     },
     [
       moveNow,
       currentState,
-      updateFireBase,
+      newKey,
       checkWinner,
       users.player2.email,
       users.player1.email,
@@ -195,10 +181,10 @@ function Multiplayer() {
 
   //-resets all gamestates in firebase
   const resetGame = () => {
-    updateFireBase("winner", "");
-    updateFireBase("current", CROSS);
-    updateFireBase("gamestate", initialState);
-    updateFireBase("lastMove", { id: "", position: -1 });
+    updateFireBase("Game", newKey, "winner", "");
+    updateFireBase("Game", newKey, "current", CROSS);
+    updateFireBase("Game", newKey, "gamestate", initialState);
+    updateFireBase("Game", newKey, "lastMove", { id: "", position: -1 });
     setMyMove(0);
   };
 
