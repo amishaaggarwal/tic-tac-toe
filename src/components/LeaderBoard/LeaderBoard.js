@@ -5,12 +5,25 @@ import React from "react";
 
 function LeaderBoard() {
   const leader = [1, 2, 3];
+
+  const sortByPosition = (obj) => {
+    const order = [],
+      res = {};
+    Object.keys(obj).forEach((key) => {
+      return (order[obj[key]["score"]["scoreCredit"] - 1] = key);
+    });
+    order.forEach((key) => {
+      res[key] = obj[key];
+    });
+    return res;
+  };
+
   return (
     <Box className="leaderboard">
       <div className="lb-header">Leaderboard</div>
       <Stack spacing={2} sx={{ padding: "6px" }}>
         {leader.map((e, i) => (
-          <div key={i} className="tb-row" >
+          <div key={i} className="tb-row">
             <Box className="tb-cell">
               <div className="squares">{i + 1}.</div>
             </Box>

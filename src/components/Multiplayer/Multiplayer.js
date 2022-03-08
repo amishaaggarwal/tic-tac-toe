@@ -64,6 +64,7 @@ function Multiplayer() {
       setUsers(data.players);
       setCount(data.gamestate.filter(checkEmpty).length);
     });
+    
   }, [newKey]);
 
   //-for cases when time runs out,selects an empty cell from grid
@@ -103,7 +104,7 @@ function Multiplayer() {
       } else {
         setConfetti(true);
         openModal();
-        updateFireBase("UserList", myUser, "score-credit", 50);
+        updateFireBase("UserList", myUser, "scoreCredit", 50);
         updateFireBase("UserList", myUser, "gameID", {
           status: "won",
           gameid: newKey,
