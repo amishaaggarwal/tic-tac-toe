@@ -1,10 +1,9 @@
-import { ref, update, get, child, onValue } from "firebase/database";
+import { ref, update, get, child} from "firebase/database";
 import { db } from "./FirebaseSetup";
 
 //-function for reading firebase data
-const readFireBase = async (endpoint, path) => {
+export const readFireBase = async (endpoint, path) => {
   const snapshot = await get(child(ref(db), `${endpoint}/${path}`));
-  console.log(snapshot.val());
   return snapshot.val();
 };
 
@@ -36,11 +35,10 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
       }
       break;
     case "UserList":
-      newKey = newKey.replace(/[^a-zA-Z/d]/g, "");
+      newKey = newKey.replace(/[^a-zA-Z/\d]/g, "");
       switch (keys) {
         case "name":
           update(ref(db, `${endpoint}/${newKey}`), { name: value });
-          console.log("xyz");
           break;
         case "email":
           update(ref(db, `${endpoint}/${newKey}`), { email: value });
@@ -52,22 +50,20 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
           {
             let newval;
             readFireBase("UserList", `${newKey}/total`).then((res) => {
-              newval = res;
-              console.log(newval);
+              newval = res?parseInt(res):0;
               update(ref(db, `${endpoint}/${newKey}`), { total: newval + 1 });
             });
           }
           break;
         case "scoreCredit":
           {
-            let newval;
+            let newval=0;
             readFireBase("UserList", `${newKey}/scores/scoreCredit`).then(
               (res) => {
-                newval = res;
+                newval = res?parseInt(res):0;
                 update(ref(db, `${endpoint}/${newKey}/scores/scoreCredit`), {
                   total: newval + 50,
                 });
-                console.log(newval, res);
               }
             );
           }
@@ -75,11 +71,10 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
         case "gameID":
           {
             let newval;
-            readFireBase("UserList", `${newKey}`).then((res) => {
-              newval = res;
-              console.log("output", newval);
+            readFireBase("UserList", `${newKey}/gameID`).then((res) => {
+              newval = res?res:{};
               newval[value.gameid] = value;
-              update(ref(db, `${endpoint}/${newKey}`), newval);
+              update(ref(db, `${endpoint}/${newKey}`), { gameID: newval });
             });
           }
           break;

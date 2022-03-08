@@ -16,7 +16,7 @@ import DrawScreen from "components/DrawScreen/DrawScreen";
 import { useLocation, useParams } from "react-router-dom";
 import { getSessionStorage } from "utils/Storage/SessionStorage";
 import { db } from "utils/firebaseSetup/FirebaseSetup";
-import { onValue, ref, update } from "firebase/database";
+import { onValue, ref } from "firebase/database";
 import { updateFireBase } from "utils/firebaseSetup/firebaseFunctions";
 //-empty grid
 const initialState = ["", "", "", "", "", "", "", "", ""];
@@ -39,12 +39,10 @@ let won = "",
 
 Modal.setAppElement("#root");
 function Multiplayer() {
-  const [emptyBlocks, setEmptyBlocks] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [wins, setWins] = useState("");
   const [count, setCount] = useState(x);
   const [confetti, setConfetti] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [myMove, setMyMove] = useState(0);
   const [drawModalIsOpen, setDrawIsOpen] = useState(false);
   const myUser = JSON.parse(getSessionStorage());
   const { newKey } = useParams();
@@ -67,12 +65,6 @@ function Multiplayer() {
     
   }, [newKey]);
 
-  //-for cases when time runs out,selects an empty cell from grid
-  const computerPlay = (empty) => {
-    let i = Math.ceil(Math.random() * (empty.length - 1));
-    return empty[i];
-  };
-
   //-checks if we have a winner by searching for winning conditions in the current grid
   const checkWinner = useCallback(
     (mygrid) => {
@@ -91,8 +83,8 @@ function Multiplayer() {
   //-opens appropriate modal if we have winner,loser or draw
   const showWinner = useCallback(() => {
     if (wins !== "") {
-      // updateFireBase("UserList", users.player1.email, "total", 1);
-      // updateFireBase("UserList", users.player2.email, "total", 1);
+      updateFireBase("UserList", users.player1.email, "total", 1);
+      updateFireBase("UserList", users.player2.email, "total", 1);
       if (
         myUser !== (wins === CROSS ? users.player1.email : users.player2.email)
       ) {
@@ -129,7 +121,6 @@ function Multiplayer() {
     (index) => {
       let mygrid = [...currentState];
       mygrid[index] = moveNow;
-      setMyMove(1);
       let lastMove = {
         id: moveNow === CROSS ? users.player1.email : users.player2.email,
         position: index,
@@ -171,11 +162,7 @@ function Multiplayer() {
 
   //-runs on every change to currentState ,updates emptyBlocks,currentMove and checksWinner
   useEffect(() => {
-    setMyMove(0);
-    const empty = currentState
-      .map((square, index) => (square === "" ? index : null))
-      .filter((val) => val !== null);
-    setEmptyBlocks(empty);
+    
     x = currentState.filter(checkEmpty).length;
     showWinner();
   }, [currentState, showWinner]);
@@ -186,7 +173,6 @@ function Multiplayer() {
     updateFireBase("Game", newKey, "current", CROSS);
     updateFireBase("Game", newKey, "gamestate", initialState);
     updateFireBase("Game", newKey, "lastMove", { id: "", position: -1 });
-    setMyMove(0);
   };
 
   //-opens winner modal
