@@ -10,23 +10,29 @@ function LeaderBoard() {
   useEffect(() => {
     readFireBase("UserList", ``).then((res) => {
       setLeaderBoard(sortByPosition(res ? res : []));
-      console.log(res);
     });
   }, []);
 
   const sortByPosition = (obj) => {
     const order = [];
-    let res = {};
+    let res = [];
     console.log(obj);
-    Object.keys(obj).forEach((key) => {
-      console.log(obj[key]["scores"].scoreCredit.total);
-      return (order[obj[key]["scores"].scoreCredit.total] = key);
-    });
-    order.forEach((key) => {
-      res[key] = obj[key];
-    });
-    console.log(res);
-    return res;
+    if (Object.keys(obj).length > 0) {
+      console.log(obj);
+      Object.keys(obj).forEach((key) => {
+        res.push([key,obj[key]["scores"].scoreCredit.total])
+      });
+      res.sort(function (a, b) {
+        return b[1]-a[1];
+      });
+      console.log(res);
+      res.forEach((key) => {
+       
+        order.push(obj[key[0]]);
+      });
+      
+      return order;
+    }
   };
 
   return (
@@ -35,12 +41,12 @@ function LeaderBoard() {
       <Stack spacing={2} sx={{ padding: "6px" }}>
         {leaderBoard.map((lb, i) => (
           <div key={i} className="tb-row">
-            {console.log(lb)}
             <Box className="tb-cell">
               <div className="squares">{i + 1}.</div>
             </Box>
             <Box className="tb-cell">
               <div>
+                {console.log(lb.dp)}
                 <img src={lb.dp} alt="display" width={30} />
               </div>
             </Box>
@@ -53,7 +59,7 @@ function LeaderBoard() {
               }}
               className="tb-cell"
             >
-              {lb.scores.scoreCredit}
+              {lb.scores.scoreCredit.total}
             </Box>
             <Box className="tb-cell">
               <StarRateIcon sx={{ color: "#f0bf00" }} />

@@ -89,6 +89,7 @@ function Multiplayer() {
         myUser !== (wins === CROSS ? users.player1.email : users.player2.email)
       ) {
         openDrawModal();
+        updateFireBase("UserList", myUser, "scoreCredit", 0);
         updateFireBase("UserList", myUser, "gameID", {
           status: "lost",
           gameid: newKey,
@@ -104,6 +105,7 @@ function Multiplayer() {
       }
     } else if (count === 0) {
       openDrawModal();
+      updateFireBase("UserList", myUser, "scoreCredit", 0);
       updateFireBase("UserList", myUser, "gameID", {
         status: "draw",
         gameid: newKey,
