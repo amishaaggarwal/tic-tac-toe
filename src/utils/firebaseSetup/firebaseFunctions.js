@@ -62,7 +62,7 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
               (res) => {
                 newval = res?parseInt(res):0;
                 update(ref(db, `${endpoint}/${newKey}/scores/scoreCredit`), {
-                  total: newval + 50,
+                  total: newval + value,
                 });
               }
             );

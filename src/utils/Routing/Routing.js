@@ -1,4 +1,3 @@
-import LeaderBoard from "components/LeaderBoard/LeaderBoard";
 import Multiplayer from "components/Multiplayer/Multiplayer";
 import TicTacGridSinglePlayer from "components/TicTacGridSinglePlayer/TicTacGridSinglePlayer";
 import ModeSelect from "pages/ModeSelect/ModeSelect";
@@ -12,7 +11,6 @@ function Routing() {
     <Routes>
       <Route path="/" element={<PlayScreen />}>
         <Route path="/" element={<ModeSelect />} />
-        <Route path="/lb" element={<LeaderBoard />} />
         <Route
           path="tic-tac-toe-single-player"
           element={<TicTacGridSinglePlayer />}
