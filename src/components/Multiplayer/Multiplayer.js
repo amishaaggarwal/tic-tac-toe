@@ -62,7 +62,15 @@ function Multiplayer() {
       setUsers(data.players);
       setCount(data.gamestate.filter(checkEmpty).length);
     });
-    
+
+    //cleanup function
+    return () => {
+      setCurrentState(initialState);
+      setMoveNow(CROSS);
+      setWins("");
+      setUsers("");
+      setCount(9);
+    }
   }, [newKey]);
 
   //-checks if we have a winner by searching for winning conditions in the current grid
@@ -73,18 +81,18 @@ function Multiplayer() {
         if (mygrid[a] && mygrid[a] === mygrid[b] && mygrid[a] === mygrid[c]) {
           won = mygrid[a];
           updateFireBase("Game", newKey, "winner", won);
+          updateFireBase("UserList", users.player1.email, "total", 1);
+          updateFireBase("UserList", users.player2.email, "total", 1);
           break;
         }
       }
     },
-    [newKey]
+    [newKey, users.player1.email, users.player2.email]
   );
 
   //-opens appropriate modal if we have winner,loser or draw
   const showWinner = useCallback(() => {
     if (wins !== "") {
-      updateFireBase("UserList", users.player1.email, "total", 1);
-      updateFireBase("UserList", users.player2.email, "total", 1);
       if (
         myUser !== (wins === CROSS ? users.player1.email : users.player2.email)
       ) {
@@ -111,7 +119,7 @@ function Multiplayer() {
         gameid: newKey,
       });
     }
-  }, [count, myUser, users.player1.email, wins, users.player2.email, newKey]);
+  }, [wins, count, myUser, users.player1.email, users.player2.email, newKey]);
 
   //-checks if the grid cell is empty
   const checkEmpty = (x) => {
@@ -164,7 +172,6 @@ function Multiplayer() {
 
   //-runs on every change to currentState ,updates emptyBlocks,currentMove and checksWinner
   useEffect(() => {
-    
     x = currentState.filter(checkEmpty).length;
     showWinner();
   }, [currentState, showWinner]);
