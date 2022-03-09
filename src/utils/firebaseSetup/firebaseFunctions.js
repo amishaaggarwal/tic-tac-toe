@@ -60,7 +60,7 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
             let newval=0;
             readFireBase("UserList", `${newKey}/scores/scoreCredit`).then(
               (res) => {
-                newval = res?parseInt(res):0;
+                newval = res ? parseInt(res.total) : 0;
                 update(ref(db, `${endpoint}/${newKey}/scores/scoreCredit`), {
                   total: newval + value,
                 });
