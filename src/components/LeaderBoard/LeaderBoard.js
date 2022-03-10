@@ -16,21 +16,19 @@ function LeaderBoard() {
   const sortByPosition = (obj) => {
     const order = [];
     let res = [];
-    console.log(obj);
+
     if (Object.keys(obj).length > 0) {
-      console.log(obj);
       Object.keys(obj).forEach((key) => {
-        res.push([key,obj[key]["scores"].scoreCredit.total])
+        res.push([key, obj[key]["scores"].scoreCredit.total]);
       });
       res.sort(function (a, b) {
-        return b[1]-a[1];
+        return b[1] - a[1];
       });
-      console.log(res);
+
       res.forEach((key) => {
-       
         order.push(obj[key[0]]);
       });
-      
+
       return order;
     }
   };
@@ -46,7 +44,6 @@ function LeaderBoard() {
             </Box>
             <Box className="tb-cell">
               <div>
-                {console.log(lb.dp)}
                 <img src={lb.dp} alt="display" width={30} />
               </div>
             </Box>

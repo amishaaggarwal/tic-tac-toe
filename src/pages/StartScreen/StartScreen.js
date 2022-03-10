@@ -45,6 +45,9 @@ function StartScreen() {
       data.players = fbdata.players;
       setInitData(data);
     });
+    return () => {
+      setInitData(data);
+    };
   }, [newKey]);
 
   const signIn = (e) => {
@@ -57,7 +60,6 @@ function StartScreen() {
         updateFireBase("UserList", user.email, "name", user.displayName);
         updateFireBase("UserList", user.email, "email", user.email);
         updateFireBase("UserList", user.email, "dp", user.photoURL);
-
 
         if (data.players.player1.name === "") {
           setSessionStorage(user.email);

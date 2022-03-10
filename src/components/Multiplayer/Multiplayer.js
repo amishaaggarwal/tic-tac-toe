@@ -44,6 +44,7 @@ function Multiplayer() {
   const [confetti, setConfetti] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [drawModalIsOpen, setDrawIsOpen] = useState(false);
+  const [lostModalIsOpen, setLostModalIsOpen] = useState(false);
   const myUser = JSON.parse(getSessionStorage());
   const { newKey } = useParams();
   const play = useLocation();
@@ -52,17 +53,95 @@ function Multiplayer() {
   const [currentState, setCurrentState] = useState(mydata.gamestate);
   const [moveNow, setMoveNow] = useState(mydata.moveNow);
 
+  //-opens winner modal
+  const openWinModal = useCallback(() => {
+    if (wins !== "") {
+      setConfetti(true);
+      setIsOpen(true);
+    }
+  }, [wins]);
+
+  //-closes winner modal
+  const closeWinModal = () => {
+    setConfetti(false);
+    setIsOpen(false);
+  };
+
+  //-opens draw modal
+  const openDrawModal = useCallback(() => {
+    wins === "" && count === 0 && setDrawIsOpen(true);
+  }, [wins, count]);
+
+  //-closes draw modal
+  const closeDrawModal = () => {
+    setDrawIsOpen(false);
+  };
+
+  //-opens lost modal
+  const openLoseModal = useCallback(() => {
+    wins !== "" && setLostModalIsOpen(true);
+  }, [wins]);
+
+  //-closes lose modal
+  const closeLoseModal = () => {
+    setLostModalIsOpen(false);
+  };
+
+  //-opens appropriate modal if we have winner,loser or draw
+  const showWinner = useCallback(
+    (wins) => {
+      if (wins !== "") {
+        if (
+          myUser !==
+          (wins === CROSS ? users.player1.email : users.player2.email)
+        ) {
+          openLoseModal();
+          updateFireBase("UserList", myUser, "scoreCredit", 0);
+          updateFireBase("UserList", myUser, "gameID", {
+            status: "lost",
+            gameid: newKey,
+          });
+        } else {
+          openWinModal();
+          updateFireBase("UserList", myUser, "scoreCredit", 50);
+          updateFireBase("UserList", myUser, "gameID", {
+            status: "won",
+            gameid: newKey,
+          });
+        }
+      } else if (count === 0) {
+        updateFireBase("Game", newKey, "draw", true);
+        openDrawModal();
+        updateFireBase("UserList", myUser, "scoreCredit", 0);
+        updateFireBase("UserList", myUser, "gameID", {
+          status: "draw",
+          gameid: newKey,
+        });
+      }
+    },
+    [
+      count,
+      myUser,
+      users.player1.email,
+      users.player2.email,
+      newKey,
+      openDrawModal,
+      openWinModal,
+      openLoseModal,
+    ]
+  );
+
   //-updates all states on value change in firebase
   useEffect(() => {
     onValue(ref(db, `Game/${newKey}`), (snapshot) => {
       const data = snapshot.val();
+      setWins(data.winner);
       setCurrentState(data.gamestate);
       setMoveNow(data.current);
-      setWins(data.winner);
       setUsers(data.players);
-      setCount(data.gamestate.filter(checkEmpty).length);
+      setCount(data.count);
     });
-
+    showWinner(wins);
     //cleanup function
     return () => {
       setCurrentState(initialState);
@@ -70,8 +149,8 @@ function Multiplayer() {
       setWins("");
       setUsers("");
       setCount(9);
-    }
-  }, [newKey]);
+    };
+  }, [newKey, showWinner, wins, count]);
 
   //-checks if we have a winner by searching for winning conditions in the current grid
   const checkWinner = useCallback(
@@ -90,37 +169,6 @@ function Multiplayer() {
     [newKey, users.player1.email, users.player2.email]
   );
 
-  //-opens appropriate modal if we have winner,loser or draw
-  const showWinner = useCallback(() => {
-    if (wins !== "") {
-      if (
-        myUser !== (wins === CROSS ? users.player1.email : users.player2.email)
-      ) {
-        openDrawModal();
-        updateFireBase("UserList", myUser, "scoreCredit", 0);
-        updateFireBase("UserList", myUser, "gameID", {
-          status: "lost",
-          gameid: newKey,
-        });
-      } else {
-        setConfetti(true);
-        openModal();
-        updateFireBase("UserList", myUser, "scoreCredit", 50);
-        updateFireBase("UserList", myUser, "gameID", {
-          status: "won",
-          gameid: newKey,
-        });
-      }
-    } else if (count === 0) {
-      openDrawModal();
-      updateFireBase("UserList", myUser, "scoreCredit", 0);
-      updateFireBase("UserList", myUser, "gameID", {
-        status: "draw",
-        gameid: newKey,
-      });
-    }
-  }, [wins, count, myUser, users.player1.email, users.player2.email, newKey]);
-
   //-checks if the grid cell is empty
   const checkEmpty = (x) => {
     return x === "";
@@ -138,6 +186,8 @@ function Multiplayer() {
       let turn = moveNow === CROSS ? ZERO : CROSS;
       checkWinner(mygrid);
       updateFireBase("Game", newKey, "gamestate", mygrid);
+      updateFireBase("Game", newKey, "count", mygrid.filter(checkEmpty).length);
+
       updateFireBase("Game", newKey, "current", turn);
       updateFireBase("Game", newKey, "lastMove", lastMove);
     },
@@ -170,46 +220,27 @@ function Multiplayer() {
     }
   };
 
-  //-runs on every change to currentState ,updates emptyBlocks,currentMove and checksWinner
+  const abc = useCallback(() => {
+    updateFireBase("Game", newKey, "rst", 0);
+  }, [newKey]);
+  
   useEffect(() => {
-    x = currentState.filter(checkEmpty).length;
-    showWinner();
-  }, [currentState, showWinner]);
-
+    abc();
+  }, [count, wins,abc]);
   //-resets all gamestates in firebase
   const resetGame = () => {
-    updateFireBase("Game", newKey, "winner", "");
+    abc();
     updateFireBase("Game", newKey, "current", CROSS);
     updateFireBase("Game", newKey, "gamestate", initialState);
     updateFireBase("Game", newKey, "lastMove", { id: "", position: -1 });
   };
 
-  //-opens winner modal
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  //-closes winner modal
-  const closeModal = () => {
-    setConfetti(false);
-    setIsOpen(false);
-  };
-
-  //-opens draw n lost modal
-  const openDrawModal = () => {
-    setDrawIsOpen(true);
-  };
-
-  //-closes draw n lose modal
-  const closeDrawModal = () => {
-    setDrawIsOpen(false);
-  };
-
   //-closes modals and resets gamestates on firebase
   const playAgain = () => {
     resetGame();
-    closeModal();
+    closeWinModal();
     closeDrawModal();
+    closeLoseModal();
   };
 
   return (
@@ -286,15 +317,14 @@ function Multiplayer() {
 
       <Modal
         isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Example Modal"
+        onRequestClose={closeWinModal}
         className="winning-modal"
         overlayClassName="modal-overlay"
       >
         <WinningScreen winnerIs={won} multi={play.state.players} />
         <Stack direction="row" spacing={2} className="button-row">
           <Button
-            onClick={closeModal}
+            onClick={closeWinModal}
             className="rst-button"
             sx={{ color: "black" }}
           >
@@ -315,10 +345,35 @@ function Multiplayer() {
         className="winning-modal"
         overlayClassName="modal-overlay"
       >
-        <DrawScreen msg={wins === "" && count === 0 ? DRAW : LOST} />
+        <DrawScreen msg={DRAW} />
         <Stack direction="row" spacing={2} className="button-row">
           <Button
             onClick={closeDrawModal}
+            className="rst-button"
+            sx={{ color: "black" }}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={playAgain}
+            className="rst-button"
+            sx={{ color: "black" }}
+          >
+            Play Again!
+          </Button>
+        </Stack>
+      </Modal>
+
+      <Modal
+        isOpen={lostModalIsOpen}
+        onRequestClose={closeLoseModal}
+        className="winning-modal"
+        overlayClassName="modal-overlay"
+      >
+        <DrawScreen msg={LOST} />
+        <Stack direction="row" spacing={2} className="button-row">
+          <Button
+            onClick={closeLoseModal}
             className="rst-button"
             sx={{ color: "black" }}
           >

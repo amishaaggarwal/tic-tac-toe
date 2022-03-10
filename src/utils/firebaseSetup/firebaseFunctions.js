@@ -1,4 +1,4 @@
-import { ref, update, get, child} from "firebase/database";
+import { ref, update, get, child } from "firebase/database";
 import { db } from "./FirebaseSetup";
 
 //-function for reading firebase data
@@ -30,6 +30,12 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
         case "winner":
           update(ref(db, `${endpoint}/${newKey}`), { winner: value });
           break;
+        case "count":
+          update(ref(db, `${endpoint}/${newKey}`), { count: value });
+          break;
+        case "rst":
+          update(ref(db, `${endpoint}/${newKey}`), { count: 9, winner: "" });
+          break;
         default:
           break;
       }
@@ -50,14 +56,14 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
           {
             let newval;
             readFireBase("UserList", `${newKey}/total`).then((res) => {
-              newval = res?parseInt(res):0;
+              newval = res ? parseInt(res) : 0;
               update(ref(db, `${endpoint}/${newKey}`), { total: newval + 1 });
             });
           }
           break;
         case "scoreCredit":
           {
-            let newval=0;
+            let newval = 0;
             readFireBase("UserList", `${newKey}/scores/scoreCredit`).then(
               (res) => {
                 newval = res ? parseInt(res.total) : 0;
@@ -72,7 +78,7 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
           {
             let newval;
             readFireBase("UserList", `${newKey}/gameID`).then((res) => {
-              newval = res?res:{};
+              newval = res ? res : {};
               newval[value.gameid] = value;
               update(ref(db, `${endpoint}/${newKey}`), { gameID: newval });
             });
