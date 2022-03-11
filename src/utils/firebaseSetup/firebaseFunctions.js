@@ -52,34 +52,38 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
         case "dp":
           update(ref(db, `${endpoint}/${newKey}`), { dp: value });
           break;
-        case "total":
+        case "total_games":
           {
             let newval;
-            readFireBase("UserList", `${newKey}/total`).then((res) => {
+            readFireBase("UserList", `${newKey}/total_games`).then((res) => {
               newval = res ? parseInt(res) : 0;
-              update(ref(db, `${endpoint}/${newKey}`), { total: newval + 1 });
+              update(ref(db, `${endpoint}/${newKey}`), { total_games: newval + 1 });
             });
           }
           break;
         case "scoreCredit":
           {
             let newval = 0;
-            readFireBase("UserList", `${newKey}/scores/scoreCredit`).then(
-              (res) => {
-                newval = res ? parseInt(res.total) : 0;
-                update(ref(db, `${endpoint}/${newKey}/scores/scoreCredit`), {
-                  total: newval + value,
-                });
-              }
-            );
+            readFireBase("UserList", `${newKey}/totalScore`).then((res) => {
+              newval = res ? parseInt(res) : 0;
+              update(ref(db, `${endpoint}/${newKey}`), {
+                totalScore: newval + value,
+              });
+            });
           }
           break;
         case "gameID":
           {
             let newval;
             readFireBase("UserList", `${newKey}/gameID`).then((res) => {
-              newval = res ? res : {};
-              newval[value.gameid] = value;
+              newval = res ? res :{};
+              if (value.gameid in newval) {
+                let val = newval[value.gameid];
+                val.push(value.obj);
+                newval[value.gameid] = val;
+              } else {
+                newval[value.gameid] = [value.obj];
+              }
               update(ref(db, `${endpoint}/${newKey}`), { gameID: newval });
             });
           }

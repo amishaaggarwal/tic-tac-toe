@@ -98,14 +98,14 @@ function Multiplayer() {
           openLoseModal();
           updateFireBase("UserList", myUser, "scoreCredit", 0);
           updateFireBase("UserList", myUser, "gameID", {
-            status: "lost",
+            obj: { status: "lost", score: 0 ,game:"tic-tac-toe"},
             gameid: newKey,
           });
         } else {
           openWinModal();
           updateFireBase("UserList", myUser, "scoreCredit", 50);
           updateFireBase("UserList", myUser, "gameID", {
-            status: "won",
+            obj: { status: "won", score: 1, game: "tic-tac-toe" },
             gameid: newKey,
           });
         }
@@ -114,7 +114,7 @@ function Multiplayer() {
         openDrawModal();
         updateFireBase("UserList", myUser, "scoreCredit", 0);
         updateFireBase("UserList", myUser, "gameID", {
-          status: "draw",
+          obj: { status: "draw", score: 0, game: "tic-tac-toe" },
           gameid: newKey,
         });
       }
@@ -160,8 +160,8 @@ function Multiplayer() {
         if (mygrid[a] && mygrid[a] === mygrid[b] && mygrid[a] === mygrid[c]) {
           won = mygrid[a];
           updateFireBase("Game", newKey, "winner", won);
-          updateFireBase("UserList", users.player1.email, "total", 1);
-          updateFireBase("UserList", users.player2.email, "total", 1);
+          updateFireBase("UserList", users.player1.email, "total_games", 1);
+          updateFireBase("UserList", users.player2.email, "total_games", 1);
           break;
         }
       }
@@ -223,10 +223,10 @@ function Multiplayer() {
   const abc = useCallback(() => {
     updateFireBase("Game", newKey, "rst", 0);
   }, [newKey]);
-  
+
   useEffect(() => {
     abc();
-  }, [count, wins,abc]);
+  }, [count, wins, abc]);
   //-resets all gamestates in firebase
   const resetGame = () => {
     abc();

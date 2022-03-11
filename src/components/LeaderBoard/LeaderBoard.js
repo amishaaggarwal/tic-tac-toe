@@ -6,7 +6,7 @@ import { readFireBase } from "utils/firebaseSetup/firebaseFunctions";
 
 function LeaderBoard() {
   const [leaderBoard, setLeaderBoard] = useState([]);
-
+  
   useEffect(() => {
     readFireBase("UserList", ``).then((res) => {
       setLeaderBoard(sortByPosition(res ? res : []));
@@ -19,7 +19,7 @@ function LeaderBoard() {
 
     if (Object.keys(obj).length > 0) {
       Object.keys(obj).forEach((key) => {
-        res.push([key, obj[key]["scores"].scoreCredit.total]);
+        res.push([key, obj[key]["totalScores"]]);
       });
       res.sort(function (a, b) {
         return b[1] - a[1];
@@ -37,7 +37,7 @@ function LeaderBoard() {
     <Box className="leaderboard">
       <div className="lb-header">Leaderboard</div>
       <Stack spacing={2} sx={{ padding: "6px" }}>
-        {leaderBoard.map((lb, i) => (
+        {leaderBoard  ? leaderBoard.map((lb, i) => (
           <div key={i} className="tb-row">
             <Box className="tb-cell">
               <div className="squares">{i + 1}.</div>
@@ -56,13 +56,13 @@ function LeaderBoard() {
               }}
               className="tb-cell"
             >
-              {lb.scores.scoreCredit.total}
+              {lb.totalScore}
             </Box>
             <Box className="tb-cell">
               <StarRateIcon sx={{ color: "#f0bf00" }} />
             </Box>
           </div>
-        ))}
+        )):<div>NO DATA!</div>}
       </Stack>
     </Box>
   );
