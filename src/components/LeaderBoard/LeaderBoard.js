@@ -3,8 +3,8 @@ import StarRateIcon from "@mui/icons-material/StarRate";
 import "./LeaderBoard.scss";
 import React, { useCallback, useEffect, useState } from "react";
 import { readFireBase } from "utils/firebaseSetup/firebaseFunctions";
-import pingPong from '../../constants/game-logos/ping-pong.jpeg';
-import ticTac from '../../constants/game-logos/tic-tac.ico';
+import pingPong from "../../constants/game-logos/ping-pong.jpeg";
+import ticTac from "../../constants/game-logos/tic-tac.ico";
 import LeaderBoardSkeleton from "./LeaderBoardSkeleton";
 
 function LeaderBoard() {
@@ -22,9 +22,8 @@ function LeaderBoard() {
       let res = [];
 
       let loc = window.location.hostname;
-      
+
       if (Object.keys(obj).length > 0 && loc.search("dashboard") !== -1) {
-        console.log(obj);
         Object.keys(obj).forEach((row, key) => {
           let games = {};
           Object.values(obj[row]["gameID"]).map((u) => {
@@ -32,14 +31,12 @@ function LeaderBoard() {
               let data = {};
               if (o.status === "won") {
                 games[o.game] = {};
-                console.log(games[o.game], o.game);
                 data["total"] = games[o.game].total
                   ? games[o.game].total + 1
                   : 1;
                 data["gname"] = o.game;
                 data["logo"] = logos[o.game];
                 games[o.game] = data;
-                console.log(games[o.game]);
               }
             });
           });
@@ -66,42 +63,22 @@ function LeaderBoard() {
       res.sort(function (a, b) {
         return b[1] - a[1];
       });
-      console.log(res);
       loc.search("dashboard") === -1
         ? res.forEach((key) => {
             obj[key[0]].totalScore = key[1];
             obj[key[0]].total_games = key[2];
             order.push(obj[key[0]]);
-        }) :
-        res.forEach((key) => {
-          console.log(Object.values(key[2]));
+          })
+        : res.forEach((key) => {
+            console.log(Object.values(key[2]));
             obj[key[0]].games_played = Object.values(key[2]);
             order.push(obj[key[0]]);
           });
-      console.log("order", order);
+
       return order;
     },
     [logos]
   );
-  // const sortByPosition = (obj) => {
-  //   const order = [];
-  //   let res = [];
-
-  //   if (Object.keys(obj).length > 0) {
-  //     Object.keys(obj).forEach((key) => {
-  //       res.push([key, obj[key]["totalScores"]]);
-  //     });
-  //     res.sort(function (a, b) {
-  //       return b[1] - a[1];
-  //     });
-
-  //     res.forEach((key) => {
-  //       order.push(obj[key[0]]);
-  //     });
-
-  //     return order;
-  //   }
-  // };
 
   useEffect(() => {
     readFireBase("UserList", ``).then((res) => {
@@ -156,11 +133,7 @@ function LeaderBoard() {
                       <div>Games Played:</div>
                       {lb.games_played.map((row, i) => (
                         <Stack direction="row" spacing={1} key={i}>
-                          <img
-                            src={row.logo}
-                            width={30}
-                            alt={row.gname}
-                          />
+                          <img src={row.logo} width={30} alt={row.gname} />
                           <span>{row.total}</span>
                         </Stack>
                       ))}
