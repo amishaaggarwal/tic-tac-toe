@@ -35,11 +35,14 @@ function TicTacGrid() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [drawModalIsOpen, setDrawIsOpen] = useState(false);
   const play = useContext(PlayerContext);
+
+  //-selects a random empty block
   const computerPlay = (empty) => {
     let i = Math.ceil(Math.random() * (empty.length - 1));
     return empty[i];
   };
 
+  //-checks for winning condition
   const checkWinner = useCallback((mygrid) => {
     for (let i = 0; i < winingState.length; i++) {
       const [a, b, c] = winingState[i];
@@ -57,6 +60,7 @@ function TicTacGrid() {
     }
   }, []);
 
+  //-determines whos move is it
   const playMove = useCallback(
     (index) => {
       let mygrid = [...currentState];
@@ -71,23 +75,24 @@ function TicTacGrid() {
     [moveNow, count, checkWinner, currentState]
   );
 
+  //-updates currentState when square is clicked
   const squareClick = (index) => {
     if (currentState[index] !== "") {
       toast.error(CELL_OCCUPIED, {
         position: toast.POSITION.BOTTOM_LEFT,
         className: "dark-toast",
       });
-    } else if (moveNow !== CROSS)
-    {
+    } else if (moveNow !== CROSS) {
       toast.error(NOT_YOUR_TURN, {
         position: toast.POSITION.BOTTOM_LEFT,
         className: "dark-toast",
       });
-    }
-    else if (wins === "") {
+    } else if (wins === "") {
       playMove(index);
     }
   };
+
+  //-updates the emptyBlocks array
   useEffect(() => {
     const empty = currentState
       .map((square, index) => (square === "" ? index : null))
@@ -95,12 +100,14 @@ function TicTacGrid() {
     setEmptyBlocks(empty);
   }, [currentState]);
 
+  //-computer move
   const ZeroPlay = useCallback(() => {
     if (won === "" && emptyBlocks.length > 0 && moveNow === ZERO) {
       playMove(computerPlay(emptyBlocks));
     }
   }, [emptyBlocks, moveNow, playMove]);
 
+  //-adds a delay for computer's move
   useEffect(() => {
     const timeout = setTimeout(() => {
       ZeroPlay();
@@ -110,6 +117,7 @@ function TicTacGrid() {
     };
   }, [ZeroPlay, wins]);
 
+  //-resets game
   const resetGame = () => {
     setCurrentState(initialState);
     x = 0;
@@ -120,34 +128,39 @@ function TicTacGrid() {
     setEmptyBlocks([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   };
 
+  //-opens winning modal
   const openModal = () => {
     setIsOpen(true);
   };
 
+  //-closes winning modal
   const closeModal = () => {
     setConfetti(false);
     setIsOpen(false);
   };
+
+  //-opens draw n lose modal
   const openDrawModal = () => {
     setDrawIsOpen(true);
   };
 
+  //-closes draw n lose modal
   const closeDrawModal = () => {
     setDrawIsOpen(false);
   };
 
+  //-resets n closes all modals when play again is clicked
   const playAgain = () => {
     closeModal();
+    closeDrawModal();
     resetGame();
   };
 
-  return <div>
+  return (
+    <div>
       <div>
         <span className="move-text">
-          {moveNow === CROSS
-            ? play.player1
-            : play.player2}
-          , Your Move!
+          {moveNow === CROSS ? play.player1 : play.player2}, Your Move!
         </span>
       </div>
       <div className="tic-tac-grid">
@@ -263,7 +276,7 @@ function TicTacGrid() {
       </Modal>
       {confetti && <Confetti />}
     </div>
-  
+  );
 }
 
 export default TicTacGrid;

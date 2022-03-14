@@ -39,6 +39,7 @@ function StartScreen() {
   const [initData, setInitData] = useState(data);
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  //-gets firebase values and sets states
   useEffect(() => {
     onValue(ref(db, `Game/${newKey}`), (snapshot) => {
       const fbdata = snapshot.val();
@@ -50,6 +51,7 @@ function StartScreen() {
     };
   }, [newKey]);
 
+  //-sign in function
   const signIn = (e) => {
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -61,6 +63,7 @@ function StartScreen() {
         updateFireBase("UserList", user.email, "email", user.email);
         updateFireBase("UserList", user.email, "dp", user.photoURL);
 
+        //-checks if player 1 is already set
         if (data.players.player1.name === "") {
           setSessionStorage(user.email);
           data.players.player1.name = user.displayName.split(" ")[0];
@@ -86,9 +89,13 @@ function StartScreen() {
         toast.error(`${errorCode}:${errorMessage}`);
       });
   };
+
+  //-copy link modal opens up
   const openModal = () => {
     setIsOpen(true);
   };
+
+  //-copy link modal closes
   const closeModal = () => {
     setIsOpen(false);
     navigate(`/tic-tac-toe/${newKey}`, { state: { ...initData } });

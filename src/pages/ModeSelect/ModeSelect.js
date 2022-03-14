@@ -7,6 +7,8 @@ import LeaderBoard from "components/LeaderBoard/LeaderBoard";
 
 function ModeSelect() {
   const navigate = useNavigate();
+
+  //-selects mode
   const changeMode = (mymode) => {
     switch (mymode) {
       case "single":
@@ -21,6 +23,7 @@ function ModeSelect() {
         navigate("/");
     }
   };
+  
   return (
     <Stack direction="row" spacing={4}>
       <Stack sx={{ backgroundColor: "#C0C0C0", padding: "60px" }} spacing={2}>

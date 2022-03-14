@@ -10,6 +10,7 @@ function Footer() {
   const [sound, setSound] = useState(false);
   const [play, { stop }] = useSound(Wanted);
 
+  //-stop n start bg music
   const toggleSound = () => {
     if (sound === false) {
       setSound(true);
@@ -19,21 +20,22 @@ function Footer() {
       stop();
     }
   };
+
   return (
     <div className="footer">
-        {sound === true ? (
-          <div>
-            <Tooltip title="Stop Music">
-              <VolumeMuteIcon onClick={toggleSound} className="sound-icon"/>
-            </Tooltip>
-          </div>
-        ) : (
-          <div>
-            <Tooltip title="Play Background Music">
-              <VolumeUpIcon onClick={toggleSound} className="sound-icon" />
-            </Tooltip>
-          </div>
-        )}
+      {sound === true ? (
+        <div>
+          <Tooltip title="Play Background Music">
+            <VolumeUpIcon onClick={toggleSound} className="sound-icon" />
+          </Tooltip>
+        </div>
+      ) : (
+        <div>
+          <Tooltip title="Stop Music">
+            <VolumeMuteIcon onClick={toggleSound} className="sound-icon" />
+          </Tooltip>
+        </div>
+      )}
     </div>
   );
 }

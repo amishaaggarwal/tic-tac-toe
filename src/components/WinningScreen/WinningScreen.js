@@ -8,8 +8,7 @@ function WinningScreen(props) {
 
   return props.multi ? (
     <div className="zoom-in">
-      {props.winnerIs === CROSS ? props.multi.player1.name : props.multi.player2.name}
-      Won!
+      {props.winnerIs === CROSS ? props.multi.player1.name : props.multi.player2.name} Won!
     </div>
   ) : (
     <div className="zoom-in">

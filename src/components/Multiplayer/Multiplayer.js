@@ -220,16 +220,19 @@ function Multiplayer() {
     }
   };
 
-  const abc = useCallback(() => {
+  //-loads page on reset game
+  const loadOnWin = useCallback(() => {
     updateFireBase("Game", newKey, "rst", 0);
   }, [newKey]);
 
+  //-loads page on reset game
   useEffect(() => {
-    abc();
-  }, [count, wins, abc]);
+    loadOnWin();
+  }, [count, wins, loadOnWin]);
+
   //-resets all gamestates in firebase
   const resetGame = () => {
-    abc();
+    loadOnWin();
     updateFireBase("Game", newKey, "current", CROSS);
     updateFireBase("Game", newKey, "gamestate", initialState);
     updateFireBase("Game", newKey, "lastMove", { id: "", position: -1 });
