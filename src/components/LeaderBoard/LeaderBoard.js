@@ -3,6 +3,7 @@ import StarRateIcon from "@mui/icons-material/StarRate";
 import "./LeaderBoard.scss";
 import React, { useEffect, useState } from "react";
 import { readFireBase } from "utils/firebaseSetup/firebaseFunctions";
+import LeaderBoardSkeleton from "./LeaderBoardSkeleton";
 
 function LeaderBoard() {
   const [leaderBoard, setLeaderBoard] = useState([]);
@@ -62,7 +63,7 @@ function LeaderBoard() {
               <StarRateIcon sx={{ color: "#f0bf00" }} />
             </Box>
           </div>
-        )):<div>NO DATA!</div>}
+        )):<LeaderBoardSkeleton/>}
       </Stack>
     </Box>
   );

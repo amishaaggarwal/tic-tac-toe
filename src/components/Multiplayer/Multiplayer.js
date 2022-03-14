@@ -98,14 +98,14 @@ function Multiplayer() {
           openLoseModal();
           updateFireBase("UserList", myUser, "scoreCredit", 0);
           updateFireBase("UserList", myUser, "gameID", {
-            obj: { status: "lost", score: 0 ,game:"tic-tac-toe"},
+            obj: { status: "lost", score: 0 ,game:"tic-tac"},
             gameid: newKey,
           });
         } else {
           openWinModal();
           updateFireBase("UserList", myUser, "scoreCredit", 50);
           updateFireBase("UserList", myUser, "gameID", {
-            obj: { status: "won", score: 1, game: "tic-tac-toe" },
+            obj: { status: "won", score: 1, game: "tic-tac" },
             gameid: newKey,
           });
         }
@@ -114,7 +114,7 @@ function Multiplayer() {
         openDrawModal();
         updateFireBase("UserList", myUser, "scoreCredit", 0);
         updateFireBase("UserList", myUser, "gameID", {
-          obj: { status: "draw", score: 0, game: "tic-tac-toe" },
+          obj: { status: "draw", score: 0, game: "tic-tac" },
           gameid: newKey,
         });
       }
