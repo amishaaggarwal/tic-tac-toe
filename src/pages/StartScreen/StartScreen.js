@@ -62,7 +62,8 @@ function StartScreen() {
         updateFireBase("UserList", user.email, "name", user.displayName);
         updateFireBase("UserList", user.email, "email", user.email);
         updateFireBase("UserList", user.email, "dp", user.photoURL);
-
+        updateFireBase("UserList", user.email, "totalScore", 0);
+        
         //-checks if player 1 is already set
         if (data.players.player1.name === "") {
           setSessionStorage(user.email);
