@@ -37,8 +37,8 @@ function LeaderBoard() {
   return (
     <Box className="leaderboard">
       <div className="lb-header">Leaderboard</div>
-      <Stack spacing={2} sx={{ padding: "6px" }}>
-        {leaderBoard  ? leaderBoard.map((lb, i) => (
+      {leaderBoard?<Stack spacing={2} sx={{ padding: "6px" }}>
+        {leaderBoard.map((lb, i) => (
           <div key={i} className="tb-row">
             <Box className="tb-cell">
               <div className="squares">{i + 1}.</div>
@@ -63,8 +63,8 @@ function LeaderBoard() {
               <StarRateIcon sx={{ color: "#f0bf00" }} />
             </Box>
           </div>
-        )):<LeaderBoardSkeleton/>}
-      </Stack>
+        ))}
+      </Stack>:<LeaderBoardSkeleton/>}
     </Box>
   );
 }
