@@ -89,7 +89,7 @@ function LeaderBoard() {
   return (
     <Box className="leaderboard">
       <div className="lb-header">Leaderboard</div>
-      {leaderBoard ? (
+      {leaderBoard.length > 0 ? (
         <Stack spacing={2} sx={{ padding: "6px" }}>
           {leaderBoard.map((lb, i) => (
             <Stack spacing={1} direction="row" key={i}>
