@@ -9,7 +9,6 @@ import LeaderBoardSkeleton from "./LeaderBoardSkeleton";
 
 function LeaderBoard() {
   const [leaderBoard, setLeaderBoard] = useState([]);
-  const [isGameLevel, setIsGameLevel] = useState(false);
   const [hidden, setHidden] = useState(true);
   const [logos, setLogos] = useState({
     "ping-pong": pingPong,
@@ -21,23 +20,18 @@ function LeaderBoard() {
       const order = [];
       let res = [];
 
-      let loc = window.location.hostname;
-
+      let loc = window.location.href;
       if (Object.keys(obj).length > 0 && loc.search("dashboard") !== -1) {
         Object.keys(obj).forEach((row, key) => {
           let games = {};
           Object.values(obj[row]["gameID"]).map((u) => {
             Object.values(u).map((o) => {
               let data = {};
-              if (o.status === "won") {
-                games[o.game] = {};
-                data["total"] = games[o.game].total
-                  ? games[o.game].total + 1
-                  : 1;
-                data["gname"] = o.game;
-                data["logo"] = logos[o.game];
-                games[o.game] = data;
-              }
+              games[o.game] = {};
+              data["total"] = games[o.game].total ? games[o.game].total + 1 : 1;
+              data["gname"] = o.game;
+              data["logo"] = logos[o.game];
+              games[o.game] = data;
             });
           });
           res.push([row, obj[row]["totalScore"], games]);
@@ -51,11 +45,11 @@ function LeaderBoard() {
             total = 0;
           Object.values(obj[row]["gameID"]).map((u) => {
             Object.values(u).map((o) => {
-              total += "tic-tac" === o.game && o.status === "won" ? 1 : 0;
+              total += "tic-tac" === o.game ? 1 : 0;
+              gameScore += "tic-tac" === o.game && o.status === "won" ? 50 : 0;
             });
           });
-          gameScore = total * 50;
-          setIsGameLevel(true);
+
           res.push([row, gameScore, total]);
         });
       }
@@ -70,7 +64,6 @@ function LeaderBoard() {
             order.push(obj[key[0]]);
           })
         : res.forEach((key) => {
-            console.log(Object.values(key[2]));
             obj[key[0]].games_played = Object.values(key[2]);
             order.push(obj[key[0]]);
           });

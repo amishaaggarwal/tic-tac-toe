@@ -7,7 +7,7 @@ function LeaderBoardSkeleton() {
   return (
     <Stack spacing={1}>
       {number.map((i) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} key={i}>
           <Skeleton variant="circular" width={40} height={40} />
           <Skeleton variant="rectangular" width={200} height={40} />
         </Stack>
