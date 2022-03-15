@@ -12,6 +12,7 @@ function DashBoard() {
       position: "absolute",
       bottom: 16,
       right: 16,
+      backgroundColor: "#B9EFA4",
     };
   return (
     <Stack spacing={1} className="dashboard">
@@ -21,7 +22,7 @@ function DashBoard() {
         <GameList />
         <LeaderBoard />
       </div>
-      <Fab color="secondary" aria-label="mail" sx={fabStyle}>
+      <Fab  aria-label="mail" sx={fabStyle}>
         <MailIcon />
       </Fab>
     </Stack>

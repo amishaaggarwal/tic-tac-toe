@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import "./Header.scss";
 import React from "react";
 
 function Header() {
@@ -30,7 +31,11 @@ function Header() {
   const mobileMenuId = "primary-search-account-menu-mobile";
 
   return (
-    <AppBar position="static" color="#301934">
+    <AppBar
+      position="static"
+      className="header"
+      sx={{ backgroundColor: "#102A43" }}
+    >
       <Toolbar>
         <Typography
           variant="h6"
