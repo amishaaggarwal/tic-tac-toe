@@ -1,12 +1,15 @@
 import { Button, Stack } from "@mui/material";
-import React from "react";
+import LeaderBoard from "components/LeaderBoard/LeaderBoard";
+import UserList from "components/UserList/UserList";
+import { child, push } from "firebase/database";
+import React, { useState } from "react";
+import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { gameListRef } from "utils/firebaseSetup/FirebaseSetup";
-import { push, child } from "firebase/database";
-import LeaderBoard from "components/LeaderBoard/LeaderBoard";
 
 function ModeSelect() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   //-selects mode
   const changeMode = (mymode) => {
@@ -17,11 +20,22 @@ function ModeSelect() {
       case "multi":
         const newKey = push(child(gameListRef, "GameSession")).key;
         let key = newKey.substring(1);
-        navigate(`/${key}`);
+        openModal();
+        // navigate(`/${key}`);
         break;
       default:
         navigate("/");
     }
+  };
+
+  //-opens lost modal
+  const openModal = () => {
+    setOpen(true);
+  };
+
+  //-closes lose modal
+  const closeModal = () => {
+    setOpen(false);
   };
 
   return (
@@ -36,6 +50,15 @@ function ModeSelect() {
         </Button>
       </Stack>
       <LeaderBoard />
+
+      <Modal
+        isOpen={open}
+        onRequestClose={closeModal}
+        className="winning-modal"
+        overlayClassName="modal-overlay"
+      >
+        <UserList />
+      </Modal>
     </Stack>
   );
 }

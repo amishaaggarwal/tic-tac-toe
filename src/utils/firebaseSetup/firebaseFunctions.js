@@ -46,6 +46,9 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
         case "name":
           update(ref(db, `${endpoint}/${newKey}`), { name: value });
           break;
+        case "isOnline":
+          update(ref(db, `${endpoint}/${newKey}`), { isOnline: value });
+          break;
         case "email":
           update(ref(db, `${endpoint}/${newKey}`), { email: value });
           break;
@@ -74,25 +77,6 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
             });
           }
           break;
-        case "gameID":
-          {
-            let newval;
-            readFireBase("UserList", `${newKey}/gameID`).then((res) => {
-              newval = res ? res : {};
-              if (value.gameid in newval) {
-                let val = newval[value.gameid];
-                val.push(value.obj);
-                newval[value.gameid] = val;
-              } else {
-                newval[value.gameid] = [value.obj];
-              }
-              update(ref(db, `${endpoint}/${newKey}`), { gameID: newval });
-            });
-          }
-          break;
-        case "isOnline":
-          update(ref(db, `${endpoint}/${newKey}`), { isOnline: value });
-          break;
         default:
           break;
       }
@@ -102,7 +86,7 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
         case "gameSessionList":
           {
             let newval;
-            readFireBase("GameID", `tic-tac/${newKey}/gameSessions`).then(
+            readFireBase("GameID", `tic-tac/users/${newKey}/gameSessions`).then(
               (res) => {
                 newval = res ? res : {};
                 if (value.gameid in newval) {
@@ -112,23 +96,47 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
                 } else {
                   newval[value.gameid] = [value.obj];
                 }
-                update(ref(db, `${endpoint}/tic-tac/${newKey}`), {
+                update(ref(db, `${endpoint}/tic-tac/users/${newKey}`), {
                   gameSessions: newval,
                 });
               }
             );
           }
           break;
-        case "total_games":
+        case "total_wins":
+          readFireBase("GameID", `tic-tac/users/${newKey}/total_wins`).then(
+            (res) => {
+              let newval = res ? parseInt(res) : 0;
+
+              update(ref(db, `${endpoint}/tic-tac/users/${newKey}`), {
+                total_wins: newval + 1,
+              });
+            }
+          );
+
+          break;
+        case "total_games_played_by":
           {
             let newval;
-            readFireBase("GameID", `${newKey}/total_games`).then((res) => {
+            readFireBase(
+              "GameID",
+              `users/${newKey}/total_games_played_by`
+            ).then((res) => {
               newval = res ? parseInt(res) : 0;
-              update(ref(db, `${endpoint}/${newKey}`), {
-                total_games: newval + 1,
+              update(ref(db, `${endpoint}/tic-tac/users/${newKey}`), {
+                total_games_played_by: newval + 1,
               });
             });
           }
+          break;
+        case "total_games":
+          readFireBase("GameID", `tic-tac/total_games`).then((res) => {
+            let newval = res ? parseInt(res) : 0;
+            update(ref(db, `${endpoint}/${newKey}`), {
+              total_games: newval + 1,
+            });
+          });
+
           break;
         default:
           break;
