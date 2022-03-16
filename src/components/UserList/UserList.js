@@ -7,10 +7,12 @@ import ListItemText from "@mui/material/ListItemText";
 import { onValue, ref } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { db } from "utils/firebaseSetup/FirebaseSetup";
+import { getSessionStorage } from "utils/Storage/SessionStorage";
 import "./UserList.scss";
 
 function UserList() {
   const [activeUsers, setActiveUsers] = useState();
+  const myUser = JSON.parse(getSessionStorage());
 
   useEffect(() => {
     let active = [];
@@ -21,7 +23,9 @@ function UserList() {
         data.val()[key],
       ]);
       dataArray.forEach((e) => {
-        e[1].isOnline === true && active.push(e[1].name);
+        e[1].isOnline === true &&
+          e[1].email != myUser &&
+          active.push(e[1].name);
       });
       setActiveUsers(active);
     });
