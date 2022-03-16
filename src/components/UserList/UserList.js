@@ -4,29 +4,28 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { onValue, ref } from "firebase/database";
 import React, { useEffect, useState } from "react";
-import { readFireBase } from "utils/firebaseSetup/firebaseFunctions";
-
+import { db } from "utils/firebaseSetup/FirebaseSetup";
 import "./UserList.scss";
 
 function UserList() {
   const [activeUsers, setActiveUsers] = useState();
 
   useEffect(() => {
-    fetchActiveUsers();
-  }, []);
-
-  //-function to fetch isOnline
-  const fetchActiveUsers = async () => {
     let active = [];
-    readFireBase("UserList", "").then((data) => {
-      let dataArray = Object.keys(data).map((key) => [key, data[key]]);
+    onValue(ref(db, `UserList/`), (data) => {
+      console.log(data.val());
+      let dataArray = Object.keys(data.val()).map((key) => [
+        key,
+        data.val()[key],
+      ]);
       dataArray.forEach((e) => {
         e[1].isOnline === true && active.push(e[1].name);
       });
       setActiveUsers(active);
     });
-  };
+  }, []);
 
   return (
     <List
