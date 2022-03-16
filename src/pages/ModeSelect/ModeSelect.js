@@ -2,7 +2,7 @@ import { Button, Stack } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { gameListRef } from "utils/firebaseSetup/FirebaseSetup";
-import { push,child, } from "firebase/database";
+import { push, child } from "firebase/database";
 import LeaderBoard from "components/LeaderBoard/LeaderBoard";
 
 function ModeSelect() {
@@ -15,15 +15,15 @@ function ModeSelect() {
         navigate("/tic-tac-toe-single-player");
         break;
       case "multi":
-        const newKey = push(child(gameListRef, "Game")).key;
-        let key = newKey.substring(1)
+        const newKey = push(child(gameListRef, "GameSession")).key;
+        let key = newKey.substring(1);
         navigate(`/${key}`);
         break;
       default:
         navigate("/");
     }
   };
-  
+
   return (
     <Stack direction="row" spacing={4}>
       <Stack sx={{ backgroundColor: "#C0C0C0", padding: "60px" }} spacing={2}>

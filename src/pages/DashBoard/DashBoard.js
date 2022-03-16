@@ -6,23 +6,27 @@ import MailIcon from "@mui/icons-material/Mail";
 import React from "react";
 import "./DashBoard.scss";
 import UserList from "components/UserList/UserList";
+import GameSlider from "components/gameSlider/GameSlider";
 
 function DashBoard() {
-    const fabStyle = {
-      position: "absolute",
-      bottom: 16,
-      right: 16,
-      backgroundColor: "#B9EFA4",
-    };
+  const fabStyle = {
+    position: "fixed",
+    bottom: 16,
+    right: 16,
+    backgroundColor: "#B9EFA4",
+  };
   return (
     <Stack spacing={1} className="dashboard">
       <Header />
-      <div direction="row" spacing={2} className="center-body">
-        <UserList/>
-        <GameList />
+      <div direction="row" spacing={1} className="center-body">
+        <GameSlider  />
         <LeaderBoard />
       </div>
-      <Fab  aria-label="mail" sx={fabStyle}>
+      <div direction="row" spacing={1} className="center-body">
+        <UserList />
+        <GameList />
+      </div>
+      <Fab aria-label="mail" sx={fabStyle}>
         <MailIcon />
       </Fab>
     </Stack>

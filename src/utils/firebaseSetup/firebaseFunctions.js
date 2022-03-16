@@ -1,4 +1,4 @@
-import { ref, update, get, child } from "firebase/database";
+import { child, get, ref, update } from "firebase/database";
 import { db } from "./FirebaseSetup";
 
 //-function for reading firebase data
@@ -10,7 +10,7 @@ export const readFireBase = async (endpoint, path) => {
 //-function for updating firebase data
 export const updateFireBase = (endpoint, newKey, keys, value) => {
   switch (endpoint) {
-    case "Game":
+    case "GameSession":
       switch (keys) {
         case "gamestate":
           update(ref(db, `${endpoint}/${newKey}`), { gamestate: value });
@@ -57,7 +57,9 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
             let newval;
             readFireBase("UserList", `${newKey}/total_games`).then((res) => {
               newval = res ? parseInt(res) : 0;
-              update(ref(db, `${endpoint}/${newKey}`), { total_games: newval + 1 });
+              update(ref(db, `${endpoint}/${newKey}`), {
+                total_games: newval + 1,
+              });
             });
           }
           break;
@@ -76,7 +78,7 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
           {
             let newval;
             readFireBase("UserList", `${newKey}/gameID`).then((res) => {
-              newval = res ? res :{};
+              newval = res ? res : {};
               if (value.gameid in newval) {
                 let val = newval[value.gameid];
                 val.push(value.obj);
@@ -88,8 +90,66 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
             });
           }
           break;
+        case "isOnline":
+          update(ref(db, `${endpoint}/${newKey}`), { isOnline: value });
+          break;
         default:
           break;
+      }
+      break;
+    case "GameID":
+      switch (keys) {
+        case "gameSessionList":
+          {
+            let newval;
+            readFireBase("GameID", `tic-tac/${newKey}/gameSessions`).then(
+              (res) => {
+                newval = res ? res : {};
+                if (value.gameid in newval) {
+                  let val = newval[value.gameid];
+                  val.push(value.obj);
+                  newval[value.gameid] = val;
+                } else {
+                  newval[value.gameid] = [value.obj];
+                }
+                update(ref(db, `${endpoint}/tic-tac/${newKey}`), {
+                  gameSessions: newval,
+                });
+              }
+            );
+          }
+          break;
+        case "total_games":
+          {
+            let newval;
+            readFireBase("GameID", `${newKey}/total_games`).then((res) => {
+              newval = res ? parseInt(res) : 0;
+              update(ref(db, `${endpoint}/${newKey}`), {
+                total_games: newval + 1,
+              });
+            });
+          }
+          break;
+        default:
+          break;
+      }
+      break;
+    case "Invites":
+      {
+        let req_id = newKey;
+        switch (keys) {
+          case "status":
+            update(ref(db, `${endpoint}/${req_id}`), { status: value });
+            break;
+          case "from":
+            update(ref(db, `${endpoint}/${req_id}`), { from: value });
+            break;
+          case "to":
+            update(ref(db, `${endpoint}/${req_id}`), { to: value });
+            break;
+          default:
+            break;
+        }
       }
       break;
     default:

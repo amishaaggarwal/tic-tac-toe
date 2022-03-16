@@ -6,10 +6,11 @@ import { readFireBase } from "utils/firebaseSetup/firebaseFunctions";
 import pingPong from "../../constants/game-logos/ping-pong.jpeg";
 import ticTac from "../../constants/game-logos/tic-tac.ico";
 import LeaderBoardSkeleton from "./LeaderBoardSkeleton";
+import { Tooltip } from "@mui/material";
 
 function LeaderBoard() {
   const [leaderBoard, setLeaderBoard] = useState([]);
-  const [hidden, setHidden] = useState(true);
+  const [rankNo, setRankNo] = useState(null);
   const [logos, setLogos] = useState({
     "ping-pong": pingPong,
     "tic-tac": ticTac,
@@ -89,51 +90,61 @@ function LeaderBoard() {
               <div
                 key={i}
                 className="tb-row"
-                onMouseOver={() => {
-                  setHidden(false);
-                }}
-                onMouseOut={() => {
-                  setHidden(true);
-                }}
+                onMouseOver={() => setRankNo(i)}
+                onMouseOut={() => setRankNo(null)}
               >
-                <Box className="tb-cell">
-                  <div className="squares">{i + 1}.</div>
-                </Box>
-                <Box className="tb-cell">
-                  <div>
-                    <img src={lb.dp} alt="display" width={30} />
-                  </div>
-                </Box>
-                <Box sx={{ color: "#f0bf00" }} className="tb-cell">
-                  {lb.name}
-                </Box>
-                <Box
-                  sx={{
-                    color: "#f0bf00",
-                  }}
-                  className="tb-cell"
-                >
-                  {lb.totalScore}
-                </Box>
-                <Box className="tb-cell">
-                  <StarRateIcon sx={{ color: "#f0bf00" }} />
-                </Box>
-              </div>
-              <div className={hidden ? "hide" : "show"}>
-                <div>
-                  {lb.games_played && (
-                    <span>
-                      <div>Games Played:</div>
-                      {lb.games_played.map((row, i) => (
-                        <Stack direction="row" spacing={1} key={i}>
-                          <img src={row.logo} width={30} alt={row.gname} />
-                          <span>{row.total}</span>
-                        </Stack>
-                      ))}
-                    </span>
-                  )}
+                <div className="tb-row-1">
+                  <Box className="tb-cell">
+                    <div className="squares">{i + 1}.</div>
+                  </Box>
+                  <Box className="tb-cell">
+                    <div>
+                      <img src={lb.dp} alt="display" width={30} />
+                    </div>
+                  </Box>
+                  <Box sx={{ color: "#f0bf00" }} className="tb-cell">
+                    {lb.name}
+                  </Box>
+                  <Box
+                    sx={{
+                      color: "#f0bf00",
+                    }}
+                    className="tb-cell"
+                  >
+                    {lb.totalScore}
+                  </Box>
+                  <Box className="tb-cell">
+                    <StarRateIcon sx={{ color: "#f0bf00" }} />
+                  </Box>
                 </div>
-                <div>Total Games Played:{lb.total_games}</div>
+                <div className={i === rankNo ? "tb-row-2" : "hide"}>
+                  {lb.games_played && (
+                    <div className="games-played">
+                      <div className="text-tpg">Games played:</div>
+                      <div className="games-desc">
+                        {lb.games_played.map((row, i) => (
+                          <Tooltip placement="top" key={i} title={row.gname}>
+                            <Stack direction="row">
+                              <img
+                                src={row.logo}
+                                width={13}
+                                height={13}
+                                className="game-logo"
+                                alt={row.gname}
+                              />
+                              <span className="value-tpg"> :{row.total}</span>
+                            </Stack>
+                          </Tooltip>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="total-played-games">
+                    <p className="text-tpg">Total games played: </p>
+                    <p className="value-tpg">{lb.total_games}</p>
+                  </div>
+                </div>
               </div>
             </Stack>
           ))}

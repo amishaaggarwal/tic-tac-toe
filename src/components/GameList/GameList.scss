@@ -1,8 +1,10 @@
-.game-list
-{
-    width: 40vw;
-    img
-    {
-        max-height: 40vh;
-    }
+.game-list-parent {
+  background-color: #252d38;
+  padding: 10px;
+}
+.game-list {
+  width: 56vw;
+  img {
+    max-height: 40vh;
+  }
 }

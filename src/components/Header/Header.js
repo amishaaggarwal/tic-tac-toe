@@ -33,8 +33,7 @@ function Header() {
   return (
     <AppBar
       position="static"
-      className="header"
-      sx={{ backgroundColor: "#102A43" }}
+      sx={{ backgroundColor: "#252d38", color: "#B9EFA4" }}
     >
       <Toolbar>
         <Typography

@@ -41,7 +41,7 @@ function StartScreen() {
 
   //-gets firebase values and sets states
   useEffect(() => {
-    onValue(ref(db, `Game/${newKey}`), (snapshot) => {
+    onValue(ref(db, `GameSession/${newKey}`), (snapshot) => {
       const fbdata = snapshot.val();
       data.players = fbdata.players;
       setInitData(data);

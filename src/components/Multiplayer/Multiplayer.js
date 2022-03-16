@@ -110,7 +110,7 @@ function Multiplayer() {
           });
         }
       } else if (count === 0) {
-        updateFireBase("Game", newKey, "draw", true);
+        updateFireBase("GameSession", newKey, "draw", true);
         openDrawModal();
         updateFireBase("UserList", myUser, "scoreCredit", 0);
         updateFireBase("UserList", myUser, "gameID", {
@@ -133,7 +133,7 @@ function Multiplayer() {
 
   //-updates all states on value change in firebase
   useEffect(() => {
-    onValue(ref(db, `Game/${newKey}`), (snapshot) => {
+    onValue(ref(db, `GameSession/${newKey}`), (snapshot) => {
       const data = snapshot.val();
       setWins(data.winner);
       setCurrentState(data.gamestate);
@@ -159,7 +159,7 @@ function Multiplayer() {
         const [a, b, c] = winingState[i];
         if (mygrid[a] && mygrid[a] === mygrid[b] && mygrid[a] === mygrid[c]) {
           won = mygrid[a];
-          updateFireBase("Game", newKey, "winner", won);
+          updateFireBase("GameSession", newKey, "winner", won);
           updateFireBase("UserList", users.player1.email, "total_games", 1);
           updateFireBase("UserList", users.player2.email, "total_games", 1);
           break;
@@ -185,11 +185,16 @@ function Multiplayer() {
       };
       let turn = moveNow === CROSS ? ZERO : CROSS;
       checkWinner(mygrid);
-      updateFireBase("Game", newKey, "gamestate", mygrid);
-      updateFireBase("Game", newKey, "count", mygrid.filter(checkEmpty).length);
+      updateFireBase("GameSession", newKey, "gamestate", mygrid);
+      updateFireBase(
+        "GameSession",
+        newKey,
+        "count",
+        mygrid.filter(checkEmpty).length
+      );
 
-      updateFireBase("Game", newKey, "current", turn);
-      updateFireBase("Game", newKey, "lastMove", lastMove);
+      updateFireBase("GameSession", newKey, "current", turn);
+      updateFireBase("GameSession", newKey, "lastMove", lastMove);
     },
     [
       moveNow,
@@ -222,7 +227,7 @@ function Multiplayer() {
 
   //-loads page on reset game
   const loadOnWin = useCallback(() => {
-    updateFireBase("Game", newKey, "rst", 0);
+    updateFireBase("GameSession", newKey, "rst", 0);
   }, [newKey]);
 
   //-loads page on reset game
@@ -233,9 +238,9 @@ function Multiplayer() {
   //-resets all gamestates in firebase
   const resetGame = () => {
     loadOnWin();
-    updateFireBase("Game", newKey, "current", CROSS);
-    updateFireBase("Game", newKey, "gamestate", initialState);
-    updateFireBase("Game", newKey, "lastMove", { id: "", position: -1 });
+    updateFireBase("GameSession", newKey, "current", CROSS);
+    updateFireBase("GameSession", newKey, "gamestate", initialState);
+    updateFireBase("GameSession", newKey, "lastMove", { id: "", position: -1 });
   };
 
   //-closes modals and resets gamestates on firebase

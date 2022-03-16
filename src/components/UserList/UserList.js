@@ -13,8 +13,8 @@ function UserList() {
       dense
       sx={{
         width: "100%",
-        maxWidth: 360,
-        bgcolor: "#102A43",
+        // maxWidth: 300,
+        bgcolor: "#252d38",
         color: "#B9EFA4",
       }}
       className="userlist"

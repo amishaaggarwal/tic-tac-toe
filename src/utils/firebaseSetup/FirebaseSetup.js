@@ -24,4 +24,4 @@ export const db = getDatabase(app);
 export const auth = getAuth();
 
 export const provider = new GoogleAuthProvider();
-export const gameListRef = ref(db, "Game/");
+export const gameListRef = ref(db, "GameSession/");

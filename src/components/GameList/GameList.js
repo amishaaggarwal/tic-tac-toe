@@ -1,3 +1,4 @@
+import { Stack, Typography } from "@mui/material";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
@@ -20,19 +21,22 @@ function GameList() {
     },
   ];
   return (
-    <ImageList className="game-list">
-      {itemData.map((item) => (
-        <ImageListItem key={item.img} onClick={() => navigate("/")}>
-          <img
-            src={item.img}
-            srcSet={item.img}
-            alt={item.title}
-            loading="lazy"
-          />
-          <ImageListItemBar title={item.title} />
-        </ImageListItem>
-      ))}
-    </ImageList>
+    <Stack spacing={2} className="game-list-parent">
+      <Typography sx={{ color: "#B9EFA4", fontSize: "20px" }}>Games</Typography>
+      <ImageList className="game-list">
+        {itemData.map((item) => (
+          <ImageListItem key={item.img} onClick={() => navigate("/")} sx={{maxHeight:"200px",width:"200px"}}>
+            <img
+              src={item.img}
+              srcSet={item.img}
+              alt={item.title}
+              loading="lazy"
+            />
+            <ImageListItemBar title={item.title} />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </Stack>
   );
 }
 
