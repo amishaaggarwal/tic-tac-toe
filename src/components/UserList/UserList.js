@@ -24,12 +24,12 @@ function UserList() {
       ]);
       dataArray.forEach((e) => {
         e[1].isOnline === true &&
-          e[1].email != myUser &&
+          e[1].email !== myUser &&
           active.push(e[1].name);
       });
       setActiveUsers(active);
     });
-  }, []);
+  }, [myUser]);
 
   return (
     <List
