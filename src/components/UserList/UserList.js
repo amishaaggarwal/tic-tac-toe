@@ -10,16 +10,18 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { updateFireBase } from "utils/firebaseSetup/firebaseFunctions";
 import { db, gameListRef } from "utils/firebaseSetup/FirebaseSetup";
-import { getSessionStorage, setSessionStorage } from "utils/Storage/SessionStorage";
+import {
+  getSessionStorage,
+  setSessionStorage,
+} from "utils/Storage/SessionStorage";
 import "./UserList.scss";
-
 
 function UserList() {
   const [activeUsers, setActiveUsers] = useState({});
-  const myUser = getSessionStorage();
+  const myUser = getSessionStorage('user');
   const [open, setOpen] = useState(false);
-  // const [requestId, setRequestId] = useState("");
-  let key;
+  const [requestId, setRequestId] = useState('');
+ 
   //-opens lost modal
   const openModal = () => {
     setOpen(true);
@@ -52,17 +54,21 @@ function UserList() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      console.log(requestId);
+      updateFireBase("Invites", requestId, "request_status", "expire");
+      updateFireBase("Invites", requestId, "to", "");
       closeModal();
-    }, 600000);
+    }, 60000);
     return () => {
       clearTimeout(timeout);
     };
-  }, [open]);
+  }, [requestId]);
 
   const sendRequest = (actUserEmail) => {
     const newKey = push(child(gameListRef, "GameSession")).key;
-    key = newKey.substring(1);
-    setSessionStorage('sessionId', key);
+    let key = newKey.substring(1);
+    setRequestId(key);
+    setSessionStorage("sessionId", key);
     updateFireBase("Invites", key, "request_status", "pending");
     updateFireBase("Invites", key, "from", myUser);
     updateFireBase("Invites", key, "to", actUserEmail);
@@ -73,9 +79,10 @@ function UserList() {
   };
 
   const cancelRequest = () => {
-    updateFireBase("Invites", key, "request_status", "cancel");
-    updateFireBase("Invites", key, "from", myUser);
-    updateFireBase("Invites", key, "to", "");
+    console.log(requestId);
+    updateFireBase("Invites", requestId, "request_status", "cancel");
+    updateFireBase("Invites", requestId, "from", myUser);
+    updateFireBase("Invites", requestId, "to", "");
     closeModal();
   };
 
@@ -83,11 +90,10 @@ function UserList() {
     <>
       <Modal
         isOpen={open}
-        // onRequestClose={closeModal}
-        className="request-timerNcancel"
+        className="request-cancel"
         overlayClassName="modal-overlay"
       >
-        <Button variant="contained" onClick={() => cancelRequest()}>
+        <Button className='cancel-btn' variant="contained" onClick={() => cancelRequest()}>
           Cancel Request
         </Button>
       </Modal>

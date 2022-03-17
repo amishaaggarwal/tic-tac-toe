@@ -24,11 +24,12 @@ function Notification() {
       const request = data.val();
       
       request && Object.values(request).map((invite, i) => {
-     
+       
         if(invite.to === myUser && invite.request_status === 'pending') {
             setOpen(true);
             setGame(invite.game);
             setSender(invite.from);
+            console.log('d')
         }
 
       });
@@ -38,12 +39,14 @@ function Notification() {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-        setOpen(false);
-        }, 600000);
+          setOpen(false);
+          updateFireBase("Invites", requestId, "request_status", "expire");
+          updateFireBase("Invites", requestId, "to", "");
+        }, 60000);
         return () => {
             clearTimeout(timeout);
         };
-    }, [open]);
+    }, [open, requestId]);
 
   const acceptRequest = () => {
     updateFireBase("Invites", requestId, "request_status", "accept");
