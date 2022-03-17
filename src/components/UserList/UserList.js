@@ -41,20 +41,14 @@ function UserList() {
       dataArray.forEach((e) => {
         e[1].isOnline === true &&
           e[1].email !== myUser &&
-<<<<<<< HEAD
-          active.push(e[1].name);
-=======
           active.push({
             name: e[1].name,
             email: e[1].email,
           });
->>>>>>> 69fa86a66c23eafff29d31360fef4ec9a412ce0f
       });
       setActiveUsers(active);
     });
   }, [myUser]);
-<<<<<<< HEAD
-=======
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -84,7 +78,6 @@ function UserList() {
     updateFireBase("Invites", key, "to", "");
     closeModal();
   };
->>>>>>> 69fa86a66c23eafff29d31360fef4ec9a412ce0f
 
   return (
     <>
