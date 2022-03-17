@@ -55,9 +55,11 @@ function UserList() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       console.log(requestId);
-      updateFireBase("Invites", requestId, "request_status", "expire");
-      updateFireBase("Invites", requestId, "to", "");
-      closeModal();
+      if(requestId) {
+        updateFireBase("Invites", requestId, "request_status", "expire");
+        updateFireBase("Invites", requestId, "to", "");
+        closeModal();
+      }
     }, 60000);
     return () => {
       clearTimeout(timeout);
