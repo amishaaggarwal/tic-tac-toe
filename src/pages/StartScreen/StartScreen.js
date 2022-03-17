@@ -66,13 +66,13 @@ function StartScreen() {
         
         //-checks if player 1 is already set
         if (data.players.player1.name === "") {
-          setSessionStorage(user.email);
+          setSessionStorage('user',user.email);
           data.players.player1.name = user.displayName.split(" ")[0];
           data.players.player1.email = user.email;
           setInitData(data);
           openModal();
         } else if (data.players.player1.email !== user.email) {
-          setSessionStorage(user.email);
+          setSessionStorage('user',user.email);
           data.players.player2.name = user.displayName.split(" ")[0];
           data.players.player2.email = user.email;
           setInitData(data);

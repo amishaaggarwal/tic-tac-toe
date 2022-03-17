@@ -7,6 +7,7 @@ import React from "react";
 import "./DashBoard.scss";
 import UserList from "components/UserList/UserList";
 import GameSlider from "components/gameSlider/GameSlider";
+import Notification from "components/Notification/Notification";
 
 function DashBoard() {
   const fabStyle = {
@@ -16,20 +17,23 @@ function DashBoard() {
     backgroundColor: "#B9EFA4",
   };
   return (
-    <Stack spacing={1} className="dashboard">
-      <Header />
-      <div direction="row" spacing={1} className="center-body">
-        <GameSlider  />
-        <LeaderBoard />
-      </div>
-      <div direction="row" spacing={1} className="center-body">
-        <UserList />
-        <GameList />
-      </div>
-      <Fab aria-label="mail" sx={fabStyle}>
-        <MailIcon />
-      </Fab>
-    </Stack>
+    <>
+      <Notification/>
+      <Stack spacing={1} className="dashboard">
+        <Header />
+        <div direction="row" spacing={1} className="center-body">
+          <GameSlider />
+          <LeaderBoard />
+        </div>
+        <div direction="row" spacing={1} className="center-body">
+          <UserList />
+          <GameList />
+        </div>
+        <Fab aria-label="mail" sx={fabStyle}>
+          <MailIcon />
+        </Fab>
+      </Stack>
+    </>
   );
 }
 
