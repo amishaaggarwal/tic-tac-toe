@@ -1,9 +1,9 @@
-export function getSessionStorage() {
-  return sessionStorage.getItem("user");
+export function getSessionStorage(key) {
+  return sessionStorage.getItem(key);
 }
 
-export function setSessionStorage(user) {
-  sessionStorage.setItem("user", JSON.stringify(user));
+export function setSessionStorage(key, value) {
+  sessionStorage.setItem(key, value);
 }
 
 export function clearSessionStorage() {

@@ -146,14 +146,20 @@ export const updateFireBase = (endpoint, newKey, keys, value) => {
       {
         let req_id = newKey;
         switch (keys) {
-          case "status":
-            update(ref(db, `${endpoint}/${req_id}`), { status: value });
+          case "request_status":
+            update(ref(db, `${endpoint}/${req_id}`), { request_status: value });
             break;
           case "from":
             update(ref(db, `${endpoint}/${req_id}`), { from: value });
             break;
           case "to":
             update(ref(db, `${endpoint}/${req_id}`), { to: value });
+            break;
+          case "game":
+            update(ref(db, `${endpoint}/${req_id}`), { game: value });
+            break;
+          case "requestId":
+            update(ref(db, `${endpoint}/${req_id}`), { requestId: value });
             break;
           default:
             break;
