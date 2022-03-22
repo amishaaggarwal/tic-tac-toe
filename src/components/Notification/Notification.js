@@ -6,14 +6,17 @@ import { getSessionStorage } from "utils/Storage/SessionStorage";
 import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom";
 
 
 
 
 function Notification() {
+
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const myUser = getSessionStorage('user');
-  const requestId = getSessionStorage('sessionId');
+  const [requestId, setRequestId] = useState('');
   const [sender, setSender] = useState('');
   const [game, setGame] = useState('');
 
@@ -24,11 +27,15 @@ function Notification() {
       const request = data.val();
       
       request && Object.values(request).map((invite, i) => {
-     
+       
+        console.log(invite.requestId);
         if(invite.to === myUser && invite.request_status === 'pending') {
+          console.log(invite.requestId);
             setOpen(true);
             setGame(invite.game);
             setSender(invite.from);
+            setRequestId(invite.requestId);
+            console.log('d')
         }
 
       });
@@ -38,15 +45,20 @@ function Notification() {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-        setOpen(false);
-        }, 600000);
+          setOpen(false);
+          if(requestId) {
+            updateFireBase("Invites", requestId, "request_status", "expire");
+            updateFireBase("Invites", requestId, "to", "");
+          }
+        }, 60000);
         return () => {
             clearTimeout(timeout);
         };
-    }, [open]);
+    }, [open, requestId]);
 
   const acceptRequest = () => {
     updateFireBase("Invites", requestId, "request_status", "accept");
+    navigate('/ok');
     setOpen(false);
   };
 
