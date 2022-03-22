@@ -8,6 +8,8 @@ import "./DashBoard.scss";
 import UserList from "components/UserList/UserList";
 import GameSlider from "components/gameSlider/GameSlider";
 import Notification from "components/Notification/Notification";
+import DrawerLeft from "components/DrawerLeft/DrawerLeft";
+
 
 function DashBoard() {
   const fabStyle = {
@@ -18,6 +20,7 @@ function DashBoard() {
   };
   return (
     <>
+      <DrawerLeft/>
       <Notification/>
       <Stack spacing={1} className="dashboard">
         <Header />
