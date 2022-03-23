@@ -8,6 +8,7 @@
   background-size: cover;
   height: 100vh;
   display: flex;
+  font-size: calc(.5em + 1vw);
   align-items: center;
   flex-direction: column;
 }
@@ -18,7 +19,7 @@
   justify-content: center;
   margin-top: 0;
   padding-top: 30px;
-  font-size: 50px;
+  font-size: calc(3em + 6px);
   color: aqua;
   margin-bottom: 3vh;
 }

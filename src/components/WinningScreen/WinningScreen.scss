@@ -9,13 +9,13 @@
   }
   50% {
     opacity: .5;
-    font-size: 90px;
+    font-size: calc(2.5em + 10px);
     display: flex;
     justify-content: center;
   }
   100% {
     opacity: 1;
-    font-size: 90px;
+    font-size: calc(2.5em + 10px);
     display: flex;
     justify-content: center;
   }

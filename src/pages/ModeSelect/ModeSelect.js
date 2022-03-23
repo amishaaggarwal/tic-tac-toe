@@ -1,14 +1,14 @@
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import LeaderBoard from "components/LeaderBoard/LeaderBoard";
 import UserList from "components/UserList/UserList";
-import Notification from "components/Notification/Notification"; 
 import { child, onValue, push, ref } from "firebase/database";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { db, gameListRef } from "utils/firebaseSetup/FirebaseSetup";
 import { getSessionStorage } from "utils/Storage/SessionStorage";
-import { toast } from "react-toastify";
+import './ModeSelect.scss';
 
 function ModeSelect() {
   const navigate = useNavigate();
@@ -18,28 +18,26 @@ function ModeSelect() {
   const [requestId, setRequestId] = useState("");
   const [isRequestRejected, setRequestRejected] = useState(false);
 
-
-
   useEffect(() => {
     onValue(ref(db, `Invites`), (data) => {
-      console.log(data.val());
       const request = data.val();
-      
-      request && Object.values(request).map((invite, i) => {
-       
-        console.log(invite.requestId);
-        if(invite.request_status === 'reject') {
-          setRequestRejected(true);  
-        }
-        if(invite.request_status === 'accept' && (invite.to === myUser || invite.from === myUser)) {
-          setAcceptRequest(true);
-          setRequestId(invite.requestId);
-        }
-      });
-      console.log(request);
+
+      request &&
+        Object.values(request).map((invite, i) => {
+          if (invite.request_status === "reject") {
+            setRequestRejected(true);
+          }
+          if (
+            invite.request_status === "accept" &&
+            (invite.to === myUser || invite.from === myUser)
+          ) {
+            setAcceptRequest(true);
+            setRequestId(invite.requestId);
+          }
+        });
     });
   }, [myUser, requestId]);
-  
+
   useEffect(() => {
     if (acceptRequest) navigate("ok");
     else if (isRequestRejected) {
@@ -54,12 +52,6 @@ function ModeSelect() {
     };
   }, [acceptRequest, isRequestRejected, navigate, requestId]);
 
-
-  // useEffect(() => {
-    
-  // }, [isRequestRejected])
-  
-  
   //-selects mode
   const changeMode = (mymode) => {
     switch (mymode) {
@@ -88,9 +80,13 @@ function ModeSelect() {
   };
 
   return (
-    <>
+    <Box>
       <Stack direction="row" spacing={4}>
-        <Stack sx={{ backgroundColor: "#C0C0C0", padding: "60px" }} spacing={2}>
+        <Stack
+          sx={{ backgroundColor: "#C0C0C0", padding: "60px" }}
+          spacing={2}
+          className="mode-select"
+        >
           <h1>Select Mode</h1>
           <Button onClick={() => changeMode("single")} variant="contained">
             Single Player
@@ -110,7 +106,7 @@ function ModeSelect() {
           <UserList />
         </Modal>
       </Stack>
-    </>
+    </Box>
   );
 }
 

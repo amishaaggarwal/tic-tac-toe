@@ -12,16 +12,16 @@ import { updateFireBase } from "utils/firebaseSetup/firebaseFunctions";
 import { db, gameListRef } from "utils/firebaseSetup/FirebaseSetup";
 import {
   getSessionStorage,
-  setSessionStorage,
+  setSessionStorage
 } from "utils/Storage/SessionStorage";
 import "./UserList.scss";
 
 function UserList() {
   const [activeUsers, setActiveUsers] = useState({});
-  const myUser = getSessionStorage('user');
+  const myUser = getSessionStorage("user");
   const [open, setOpen] = useState(false);
-  const [requestId, setRequestId] = useState('');
- 
+  const [requestId, setRequestId] = useState("");
+
   //-opens lost modal
   const openModal = () => {
     setOpen(true);
@@ -35,7 +35,6 @@ function UserList() {
   useEffect(() => {
     let active = [];
     onValue(ref(db, `UserList/`), (data) => {
-      console.log(data.val());
       let dataArray = Object.keys(data.val()).map((key) => [
         key,
         data.val()[key],
@@ -54,8 +53,7 @@ function UserList() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log(requestId);
-      if(requestId) {
+      if (requestId) {
         updateFireBase("Invites", requestId, "request_status", "expire");
         updateFireBase("Invites", requestId, "to", "");
         closeModal();
@@ -81,7 +79,6 @@ function UserList() {
   };
 
   const cancelRequest = () => {
-    console.log(requestId);
     updateFireBase("Invites", requestId, "request_status", "cancel");
     updateFireBase("Invites", requestId, "from", myUser);
     updateFireBase("Invites", requestId, "to", "");
@@ -95,7 +92,11 @@ function UserList() {
         className="request-cancel"
         overlayClassName="modal-overlay"
       >
-        <Button className='cancel-btn' variant="contained" onClick={() => cancelRequest()}>
+        <Button
+          className="cancel-btn"
+          variant="contained"
+          onClick={() => cancelRequest()}
+        >
           Cancel Request
         </Button>
       </Modal>
@@ -115,7 +116,6 @@ function UserList() {
         </ListItem>
         {activeUsers &&
           Object.values(activeUsers).map((actUser, i) => {
-            console.log(actUser);
             const labelId = `checkbox-list-secondary-label-${actUser}`;
             return (
               <ListItem key={i} disablePadding>
