@@ -39,8 +39,28 @@ function TicTacGrid() {
   //-selects a random empty block
   const computerPlay = (empty) => {
     let i = Math.ceil(Math.random() * (empty.length - 1));
+    // i = minimax(currentState, empty)[1];
     return empty[i];
   };
+
+  // const minimax = (board, empty) => {
+  //   let thisScore;
+  //   let maxScore = -1;
+  //   let bestMove = null;
+  //   for (let i = 0; i < empty.length; i++) {
+  //     let copy = board;
+  //     copy[empty[i]] = ZERO;
+  //     let emp = copy
+  //       .map((square, index) => (square === "" ? index : null))
+  //       .filter((val) => val !== null);
+  //     thisScore = minimax(copy, emp)[0];
+  //     if (thisScore >= maxScore) {
+  //       maxScore = thisScore;
+  //       bestMove = empty[i];
+  //     }
+  //   }
+  //   return [maxScore, bestMove];
+  // };
 
   //-checks for winning condition
   const checkWinner = useCallback((mygrid) => {
